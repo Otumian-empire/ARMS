@@ -1,0 +1,4 @@
+.env
+node_modules
+api-doc.md
+spec-doc.md
