@@ -7,24 +7,31 @@ const tenantsDB = require("../models/tenants");
 
 // fetch all tenants
 tenantRouter.get("/", (req, res) => {
-  tenantsDB.find({}).toArray(function (err, tenants) {
-    if (err) throw err;
-    console.log(result);
-    return res.json({ tenants });
-  });
-  // const tenants = tenantsDB.find({}).toArray();
-  // // tenants.toArray();
-
-  // return res.json({ tenants });
+  tenantsDB.collection
+    .find()
+    .toArray()
+    .then((tenants) => res.json({ tenants }))
+    .catch((err) => {
+      console.log(err);
+      return res.json({
+        success: false,
+        message: err,
+      });
+    });
 });
 
 // fetch a tenant
 tenantRouter.get("/:tenant_id", (req, res) => {
-  return res.json({
-    message: "Tenant route",
-    // tenant: tenantsDB.findById(req.params.tenant_id),
-    id: req.params.tenant_id,
-  });
+  tenantsDB
+    .findOne({ _id: req.params.tenant_id })
+    .then((tenant) => res.json({ tenant }))
+    .catch((err) => {
+      console.log(err);
+      return res.json({
+        success: false,
+        message: err,
+      });
+    });
 });
 
 // create a tenant - add tenant data
