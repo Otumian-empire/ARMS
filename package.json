@@ -14,7 +14,7 @@
     "tenant",
     "room"
   ],
-  "author": "",
+  "author": "Otumian-empire@github.com",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",

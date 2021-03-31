@@ -5,6 +5,7 @@ const logger = require("morgan");
 
 const adminRouter = require("./routes/admin");
 const tenantRouter = require("./routes/tenants");
+const apartmentRouter = require("./routes/apartments");
 
 const app = express();
 const port = process.env.port || 3000;
@@ -21,6 +22,7 @@ app.use(cors());
 // Routes
 app.use("/admin", adminRouter);
 app.use("/tenants", tenantRouter);
+app.use("/apartments", apartmentRouter);
 
 app.listen(port, console.log(`server started on port ${port}`));
 
