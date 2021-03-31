@@ -166,7 +166,7 @@ tenantRouter.put("/update/:tenant_id", (req, res) => {
 // delete tenant data - admin privileges is needed
 tenantRouter.delete("/delete/:tenant_id", (req, res) => {
   const tenant_id = req.params.tenant_id;
-  
+
   tenantsDB.findOneAndRemove({ _id: tenant_id }, (err, deletedTenant) => {
     if (err) {
       console.log(err);
@@ -181,4 +181,4 @@ tenantRouter.delete("/delete/:tenant_id", (req, res) => {
   });
 });
 
-module.exports = tenantRouter;
+module.exports = { tenantRouter };

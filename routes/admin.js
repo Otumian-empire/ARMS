@@ -144,6 +144,9 @@ adminRouter.delete("/:admin_id", (req, res) => {
       return res.json({ success: false, msg: err });
     }
 
+    if (!deletedTenant)
+      return res.json({ success: false, msg: "admin no found" });
+
     return res.json({
       success: true,
       msg: "Admin details deleted successfully",
@@ -152,4 +155,4 @@ adminRouter.delete("/:admin_id", (req, res) => {
   });
 });
 
-module.exports = adminRouter;
+module.exports = { adminRouter };

@@ -22,4 +22,4 @@ const apartmentSchema = new mongoose.Schema(apartmentSchemaStructure);
 // model
 const Apartment = mongoose.model("apartments", apartmentSchema);
 
-module.exports = Apartment;
+module.exports = { Apartment };

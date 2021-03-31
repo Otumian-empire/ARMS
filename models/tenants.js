@@ -55,4 +55,4 @@ const tenantSchema = new mongoose.Schema(tenantSchemaStructure);
 // model
 const Tenant = mongoose.model("tenants", tenantSchema);
 
-module.exports = Tenant;
+module.exports = { Tenant };
