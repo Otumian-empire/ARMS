@@ -1,7 +1,9 @@
+require('dotenv').config()
+
 const mongoose = require("mongoose");
 
 // connect to a database, name of database after localhost/
-mongoose.connect("mongodb://127.0.0.1/arms_db", {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,

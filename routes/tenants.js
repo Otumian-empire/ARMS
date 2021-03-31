@@ -129,16 +129,56 @@ tenantRouter.post("/login", (req, res) => {
     });
 });
 
-// update
+// update - tenant may update only their emaila and phone number
+// this applies for the next of kins
 tenantRouter.put("/update/:tenant_id", (req, res) => {
-  console.log(req.params.tenant_id);
-  return res.json({ message: "Tenant route" });
+  const { email, phone, kins_email, kins_phone } = req.body;
+  const tenant_id = req.params.tenant_id;
+
+  tenantsDB.findOne({ _id: tenant_id }, (err, tenant) => {
+    if (err) {
+      console.log(err);
+      return res.json({ success: false, msg: err });
+    }
+
+    if (!tenant) return res.json({ success: false, msg: "Tenant no found" });
+
+    tenant.email = email;
+    tenant.phone = phone;
+    tenant.kins_email = kins_email;
+    tenant.kins_phone = kins_phone;
+
+    tenant.save((err, updatedTenant) => {
+      if (err) {
+        console.log(err);
+        return res.json({ success: false, msg: err });
+      }
+
+      return res.json({
+        success: true,
+        msg: "Tenant details updated",
+        id: updatedTenant._id,
+      });
+    });
+  });
 });
 
 // delete tenant data - admin privileges is needed
 tenantRouter.delete("/delete/:tenant_id", (req, res) => {
-  console.log(req.params.tenant_id);
-  return res.json({ message: "Tenant route" });
+  const tenant_id = req.params.tenant_id;
+  
+  tenantsDB.findOneAndRemove({ _id: tenant_id }, (err, deletedTenant) => {
+    if (err) {
+      console.log(err);
+      return res.json({ success: false, msg: err });
+    }
+
+    return res.json({
+      success: true,
+      msg: "Tenant details deleted successfully",
+      id: deletedTenant._id,
+    });
+  });
 });
 
 module.exports = tenantRouter;
