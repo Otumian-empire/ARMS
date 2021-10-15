@@ -4,19 +4,19 @@ This document details the database specifications and design of ARMS.
 
 ## Model objects
 
+### admin
+
+- ID - row count
+- username
+- email (Would be used to send and receive emails)
+- password
+
 ### apartment (room)
 
 - ID
 - room_number - what is the room's number? (4 chars)
 - description
-- fee - how much the room costs?
-
-### admin
-
-- ID
-- username
-- email (Would be used to send and receive emails)
-- password
+- amount - how much the room costs?
 
 ### tenant
 
@@ -25,18 +25,20 @@ This document details the database specifications and design of ARMS.
 - username
 - password
 - email
-- mobile number
+- phone
 - date of birth
 - address of previous residence
-- date created
-- next of kins
-  <!-- for the sake of reusing the same data set
-  with a new sql database, it is better not to nest
-  any value -->
-  - full name
-  - email
-  - mobile number
-  - address
+- date created (created_at)
+- date updated (updated_at)
+
+### next of kins
+
+- ID
+- tenant_id
+- full name
+- email
+- phone
+- address
 
 ### cash
 
@@ -44,23 +46,29 @@ This is a document for all cash paid buy tenants. It can also be used as referen
 
 - ID
 - tenant ID
+- token
 - amount
-- date paid
+- date paid - paid_at
 
 ### rent
 
 - ID
-- apartment ID - what is the room's number? (Unique)
 - tenant ID - who is in the room?
+- apartment ID - what is the room's number? (Unique)
 - cash ID - how much paid
-- date rented - when the room was given out?
-- date to evacuate - when the tenant should move out?
+- date rented - rented_at - when the room was given out?
+- date to evacuate - when the tenant should move out? (this should be done programmatically) month of rented date + (total / cost)
 
 ## .env
 
-Create a `.env` file and add the following data:
+Create a `.env` file in the root folder and add the following data:
 
+- SESSION_SECRET=''
 - JWT_SECRET=''
 - REFRESH_JWT_SECRET=''
-- MONGODB_URI=''
 - SALT_ROUNDS=''
+- PGHOST=""
+- PGUSER=""
+- PGDATABASE=""
+- PGPASSWORD=""
+- PGPORT=5432
