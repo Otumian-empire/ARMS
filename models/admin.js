@@ -1,49 +1,26 @@
-const { client } = require("./connection");
+const mongoose = require("./connection");
 
-module.exports = {
-  create: (params) => {
-    const query = `
-      INSERT INTO admin
-        (username, email, password) 
-      VALUES
-        ($1, $2, $3)`;
-
-    return client.query(query, params);
+const AdminSchemaStructure = {
+  username: {
+    type: String,
+    required: true,
+    unique: true,
   },
-  findOne: {
-    id: (id) => {
-      const query = `SELECT id, username, email FROM users WHERE id=$1`;
-      return client.query(query, [id]);
-    },
-    username: (username) => {
-      const query = `
-        SELECT id, username, email, password 
-        FROM users WHERE username=$1`;
-
-      return client.query(query, [username]);
-    },
+  password: {
+    type: String,
+    required: true,
   },
-  find: () => {
-    const query = `
-      SELECT 
-        id, unique_id, full_name, email, password,
-        user_type, phone, confirmed_email  
-      FROM users`;
-
-    return client.query(query, [id]);
-  },
-  update: {
-    password: (params) => {
-      const query = `UPDATE admin SET password=$2 WHERE username=$1`;
-      return client.query(query, params);
-    },
-    email: (params) => {
-      const query = `UPDATE admin SET email=$2 WHERE username=$1`;
-      return client.query(query, params);
-    },
-  },
-  delete: (username) => {
-    const query = `DELETE FROM admin WHERE username=$1`;
-    return client.query(query, [username]);
+  email: {
+    type: String,
+    required: true,
+    unique: true,
   },
 };
+
+// mongoose schema
+const AdminSchema = new mongoose.Schema(AdminSchemaStructure);
+
+// model
+const Admin = mongoose.model("Admin", AdminSchema);
+
+module.exports = { Admin };

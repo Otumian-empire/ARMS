@@ -10,7 +10,7 @@ const { apartmentRouter } = require("./routes/apartments");
 const app = express();
 const port = process.env.port || 3000;
 
-// Middlewares
+// Middleware
 app.use(express.urlencoded({ extended: false }));
 
 // Http logger

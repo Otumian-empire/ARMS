@@ -1,45 +1,29 @@
-const { client } = require("./connection");
+const mongoose = require("./connection");
 
-module.exports = {
-  create: (params) => {
-    const query = `
-      INSERT INTO cash
-        (tenant_id, token, amount) 
-      VALUES
-        ((SELECT id FROM tenant WHERE id=$1), $2, $3)`;
-
-    return client.query(query, params);
+const CashSchemaStructure = {
+  tenantId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
   },
-  findOne: {
-    id: (id) => {
-      const query = `
-        SELECT id, tenant_id, token, amount, paid_at
-        FROM cash WHERE id=$1`;
-      return client.query(query, [id]);
-    },
-    tenant_id: (tenant_id) => {
-      const query = `
-        SELECT id, tenant_id, token, amount, paid_at 
-        FROM cash WHERE tenant_id=$1`;
-
-      return client.query(query, [tenant_id]);
-    },
+  token: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    unique: true,
   },
-  find: () => {
-    const query = `
-      SELECT id, tenant_id, token, amount, paid_at
-      FROM cash`;
-
-    return client.query(query);
+  amount: {
+    type: Number,
+    required: true,
   },
-  update: (params) => {
-    const query = `
-    UPDATE cash SET amount=$2, paid_at=current_timestamp WHERE id=$1`;
-
-    return client.query(query, params);
-  },
-  delete: (id) => {
-    const query = `DELETE FROM cash WHERE id=$1`;
-    return client.query(query, [id]);
+  paidAt: {
+    type: Date,
+    default: Date.now(),
   },
 };
+
+// mongoose schema
+const CashSchema = new mongoose.Schema(CashSchemaStructure);
+
+// model
+const Cash = mongoose.model("cash", CashSchema);
+
+module.exports = { Cash };

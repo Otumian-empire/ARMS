@@ -63,12 +63,7 @@ This is a document for all cash paid buy tenants. It can also be used as referen
 
 Create a `.env` file in the root folder and add the following data:
 
-- SESSION_SECRET=''
 - JWT_SECRET=''
 - REFRESH_JWT_SECRET=''
 - SALT_ROUNDS=''
-- PGHOST=""
-- PGUSER=""
-- PGDATABASE=""
-- PGPASSWORD=""
-- PGPORT=5432
+- MONGODB_URI=''

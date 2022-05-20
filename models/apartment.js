@@ -1,57 +1,30 @@
-const { client } = require("./connection");
+const mongoose = require("./connection");
 
-module.exports = {
-  create: (params) => {
-    const query = `
-      INSERT INTO apartment
-        (room_number, description, amount) 
-      VALUES
-        ($1, $2, $3)`;
-
-    return client.query(query, params);
+const ApartmentSchemaStructure = {
+  roomNumber: {
+    type: String,
+    required: true,
   },
-  findOne: {
-    id: (id) => {
-      const query = `
-        SELECT id, room_number, description, amount
-        FROM apartment WHERE id=$1`;
-      return client.query(query, [id]);
-    },
-    room_number: (room_number) => {
-      const query = `
-        SELECT id, room_number, description, amount 
-        FROM apartment WHERE room_number=$1`;
-
-      return client.query(query, [room_number]);
-    },
+  description: {
+    type: String,
+    required: true,
+    unique: true,
   },
-  find: () => {
-    const query = `
-      SELECT id, room_number, description, amount
-      FROM apartment`;
-
-    return client.query(query, [id]);
+  price: {
+    type: Number,
+    required: true,
   },
-  update: {
-    id: (params) => {
-      const query = `
-        UPDATE apartment 
-        SET room_number=$2, description=$3, amount=$4
-        WHERE id=$1`;
-
-      return client.query(query, params);
-    },
-    room_number: (params) => {
-      const query = `
-        UPDATE apartment 
-        SET room_number=$2, description=$3, amount=$4
-        WHERE room_number=$1`;
-
-      return client.query(query, params);
-    },
-  },
-  delete: (id) => {
-    const query = `DELETE FROM apartment WHERE id=$1`;
-    return client.query(query, [id]);
+  email: {
+    type: String,
+    required: true,
+    unique: true,
   },
 };
+
+// mongoose schema
+const ApartmentSchema = new mongoose.Schema(ApartmentSchemaStructure);
+
+// model
+const Apartment = mongoose.model("apartment", ApartmentSchema);
+
+module.exports = { Apartment };

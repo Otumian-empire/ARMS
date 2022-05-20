@@ -1,11 +1,12 @@
 {
-  "name": "armes",
+  "name": "arms",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "clear && nodemon --trace-warnings index.js",
-    "setup": "node setup.js;"
+    "setup": "node setup.js;",
+    "start": "node index.js"
   },
   "keywords": [
     "renting",
@@ -15,6 +16,7 @@
     "tenant",
     "room"
   ],
+  "type": "commonjs",
   "author": "Otumian-empire@github.com",
   "license": "ISC",
   "dependencies": {
@@ -22,6 +24,8 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "joi": "^17.6.0",
+    "mongoose": "^6.3.4",
     "morgan": "^1.10.0",
     "pg": "^8.6.0",
     "uuid": "^8.3.2"
