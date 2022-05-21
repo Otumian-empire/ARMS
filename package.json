@@ -2,11 +2,11 @@
   "name": "arms",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "clear && nodemon --trace-warnings index.js",
+    "dev": "clear && nodemon --trace-warnings app.js",
     "setup": "node setup.js;",
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "keywords": [
     "renting",

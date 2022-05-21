@@ -1,5 +1,5 @@
 const Cash = require("../models/cash").Cash;
-const Tenant = require("../models/tenant").Tenant;
+// const Tenant = require("../models/tenant").Tenant;
 
 module.exports = {
   find: (req, res) => {
