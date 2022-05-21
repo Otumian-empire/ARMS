@@ -21,8 +21,8 @@ cashRouter.post("/", create);
 // login cash - they can change their data
 cashRouter.post("/login", login);
 
-// update - cash may update only the email
-cashRouter.put("/:cashId", update);
+// TODO: think about whether the cash should be updated
+// cashRouter.put("/:cashId", update);
 
 // delete cash data - cash privileges is needed
 cashRouter.delete("/:cashId", delete_);
