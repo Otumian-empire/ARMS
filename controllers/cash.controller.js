@@ -1,5 +1,5 @@
 const Cash = require("../models/cash").Cash;
-// const Tenant = require("../models/tenant").Tenant;
+const { generateToken } = require("../utils/functions");
 
 module.exports = {
   find: (req, res) => {
@@ -28,7 +28,7 @@ module.exports = {
   },
   create: (req, res) => {
     const tenantId = req.params.tenantId;
-    const token = 123; // TODO: add a function to generate the token
+    const token = generateToken();
     const amount = req.body.amount;
 
     Cash.create({ tenantId, token, amount })
@@ -39,8 +39,6 @@ module.exports = {
             message: "Cash deposited successfully",
             id: result._id,
           });
-
-        // throw Error("There was an error");
       })
       .catch((err) => {
         console.log(err);
@@ -50,8 +48,6 @@ module.exports = {
         });
       });
   },
-  // TODO: think about whether the cash should be updated
-  // update: (req, res) => {},
   delete_: (req, res) => {
     Cash.findOneAndRemove({ _id: req.params.cashId }, (err, result) => {
       if (err) {

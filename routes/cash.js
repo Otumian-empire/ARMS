@@ -4,8 +4,6 @@ const {
   find,
   findOne,
   create,
-  login,
-  update,
   delete_,
 } = require("../controllers/cash.controller");
 
@@ -17,12 +15,6 @@ cashRouter.get("/:tenantId", findOne);
 
 // create a cash - add cash data
 cashRouter.post("/", create);
-
-// login cash - they can change their data
-cashRouter.post("/login", login);
-
-// TODO: think about whether the cash should be updated
-// cashRouter.put("/:cashId", update);
 
 // delete cash data - cash privileges is needed
 cashRouter.delete("/:cashId", delete_);
