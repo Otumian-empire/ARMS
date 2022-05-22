@@ -3,8 +3,8 @@ const cors = require("cors");
 const logger = require("morgan");
 
 const { adminRouter } = require("./routes/admin");
-const { tenantRouter } = require("./routes/tenants");
 const { apartmentRouter } = require("./routes/apartments");
+const { tenantRouter } = require("./routes/tenants");
 const { cashRouter } = require("./routes/cash");
 const { port } = require("./utils/app.constant");
 
@@ -20,8 +20,8 @@ app.use(cors());
 
 // Routes
 app.use("/admin", adminRouter);
-app.use("/tenants", tenantRouter);
-app.use("/apartments", apartmentRouter);
+app.use("/apartment", apartmentRouter);
+app.use("/tenant", tenantRouter);
 app.use("/cash", cashRouter);
 
 app.listen(port, console.log(`server started on port ${port}`));

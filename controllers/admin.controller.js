@@ -79,7 +79,10 @@ module.exports = {
 
         bcrypt.compare(password, result.password, (error, same) => {
           if (error || !same) {
-            throw new Error(INVALID_CREDENTIALS);
+            return res.json({
+              success: false,
+              message: INVALID_CREDENTIALS,
+            });
           }
 
           return res.json({
@@ -110,7 +113,10 @@ module.exports = {
 
         result.save((error, updatedResult) => {
           if (error || !updatedResult) {
-            throw new Error(AN_ERROR_OCCURRED);
+            return res.json({
+              success: false,
+              message: AN_ERROR_OCCURRED,
+            });
           }
 
           return res.json({

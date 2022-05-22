@@ -1,111 +1,128 @@
 const { Apartment } = require("../models/apartment");
+const {
+  NOT_FOUND,
+  AN_ERROR_OCCURRED,
+  APARTMENT_CREATED_SUCCESSFULLY,
+  UPDATE_SUCCESSFUL,
+  DELETED_SUCCESSFULLY,
+} = require("../utils/api.messages");
 
 module.exports = {
-  find: (req, res) => {
+  find: (_req, res) => {
     Apartment.find()
-      .then((apartments) => res.json({ apartments }))
-      .catch((err) => {
-        console.log(err);
+      .select("-__v")
+      .then((apartments) => res.json(apartments))
+      .catch((_error) => {
         return res.json({
           success: false,
-          message: err,
+          message: AN_ERROR_OCCURRED,
         });
       });
   },
-  findOne: (req, res) => {
-    Apartment.findOne({ _id: req.params.apartment_id }, (err, apartment) => {
-      if (err) {
-        console.log(err);
-        return res.json({
-          success: false,
-          message: err,
-        });
-      }
-
-      if (!apartment)
-        return res.json({ success: false, msg: "apartment not found" });
-
-      return res.json({ apartment });
-    });
-  },
-  create: (req, res) => {
-    let { room_number, description, fee } = req.body;
-
-    Apartment.create(
-      { room_number, description, fee },
-      (err, createdApartment) => {
-        if (err) {
-          console.log(err);
-          return res.json({
-            success: false,
-            message: err,
-          });
-        }
-
-        if (!createdApartment)
-          return res.json({ success: false, msg: "apartment not created" });
-
-        return res.json({
-          success: true,
-          message: "apartment created successfully",
-          id: createdApartment._id,
-        });
-      }
-    );
-  },
-  update: (req, res) => {
-    const { room_number, description, fee } = req.body;
+  findById: (req, res) => {
     const apartmentId = req.params.apartmentId;
 
-    Apartment.findOne({ _id: apartmentId }, (err, apartment) => {
-      if (err) {
-        console.log(err);
-        return res.json({ success: false, msg: err });
-      }
-
-      if (!apartment)
-        return res.json({ success: false, msg: "apartment no found" });
-
-      if (room_number != undefined) apartment.room_number = room_number;
-
-      if (description !== undefined) apartment.description = description;
-
-      if (fee !== undefined) apartment.fee = fee;
-
-      apartment.save((err, updatedApartment) => {
-        if (err) {
-          console.log(err);
-          return res.json({ success: false, msg: err });
+    Apartment.findById(apartmentId)
+      .select("-__v")
+      .then((apartment) => {
+        if (!apartment) {
+          throw new Error(NOT_FOUND);
         }
 
+        return res.json(apartment);
+      })
+      .catch((error) => {
         return res.json({
-          success: true,
-          msg: "apartment details updated",
-          id: updatedApartment._id,
+          success: false,
+          message: error.message,
         });
       });
+  },
+  // TODO: Admin privilege is required
+  create: (req, res) => {
+    let { roomNumber, description, price } = req.body;
+
+    const apartment = new Apartment({
+      roomNumber,
+      description,
+      price: Number(price),
     });
+
+    apartment.save((error, result) => {
+      if (error || !result) {
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED,
+        });
+      }
+
+      return res.json({
+        success: true,
+        message: APARTMENT_CREATED_SUCCESSFULLY,
+        id: result.id,
+      });
+    });
+  },
+  update: (req, res) => {
+    const apartmentId = req.params.apartmentId;
+    const { roomNumber, description, price } = req.body;
+
+    Apartment.findById(apartmentId)
+      .then((apartment) => {
+        if (!apartment) {
+          throw new Error(NOT_FOUND);
+        }
+
+        if (roomNumber) {
+          apartment.roomNumber = roomNumber;
+        }
+
+        if (description) {
+          apartment.description = description;
+        }
+
+        if (price) {
+          apartment.price = Number(price);
+        }
+
+        apartment.save((error, updatedApartment) => {
+          if (error || !updatedApartment) {
+            return res.json({
+              success: false,
+              message: AN_ERROR_OCCURRED,
+            });
+          }
+
+          return res.json({
+            success: true,
+            message: UPDATE_SUCCESSFUL,
+            id: updatedApartment.id,
+          });
+        });
+      })
+      .catch((error) => {
+        return res.json({
+          success: false,
+          message: error.message,
+        });
+      });
   },
   delete_: (req, res) => {
     const apartmentId = req.params.apartmentId;
 
-    Apartment.findOneAndRemove(
-      { _id: apartmentId },
-      (err, deletedApartment) => {
-        if (err) {
-          console.log(err);
-          return res.json({ success: false, msg: err });
-        }
-
-        if (!deletedApartment)
-          return res.json({ success: false, msg: "apartment no found" });
-
+    Apartment.findByIdAndDelete(apartmentId, (error, deletedApartment) => {
+      if (error || !deletedApartment) {
         return res.json({
-          success: true,
-          msg: "apartment details deleted successfully",
-          id: deletedApartment._id,
+          success: false,
+          message: AN_ERROR_OCCURRED,
         });
       }
-    );
+
+      return res.json({
+        success: true,
+        message: DELETED_SUCCESSFULLY,
+        id: deletedApartment.id,
+      });
+    });
   },
 };

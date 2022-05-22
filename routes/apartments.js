@@ -2,7 +2,7 @@ const apartmentRouter = require("express").Router();
 
 const {
   find,
-  findOne,
+  findById,
   create,
   update,
   delete_,
@@ -12,7 +12,7 @@ const {
 apartmentRouter.get("/", find);
 
 // fetch an apartment
-apartmentRouter.get("/:apartmentId", findOne);
+apartmentRouter.get("/:apartmentId", findById);
 
 // create a apartment - add apartment data
 apartmentRouter.post("/", create);
