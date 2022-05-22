@@ -1,8 +1,7 @@
 const adminRouter = require("express").Router();
 
 const {
-  find,
-  findOne,
+  findById,
   create,
   login,
   update,
@@ -10,9 +9,7 @@ const {
 } = require("../controllers/admin.controller");
 
 // fetch an admin
-adminRouter.get("/:adminId", findOne);
-
-adminRouter.get("/", find);
+adminRouter.get("/:adminId", findById);
 
 // create a admin - add admin data
 adminRouter.post("/", create);

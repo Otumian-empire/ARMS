@@ -2,145 +2,151 @@ const bcrypt = require("bcrypt");
 
 const { Admin } = require("../models/admin");
 const { rounds } = require("../utils/app.constant");
+const {
+  ADMIN_CREATED_SUCCESSFULLY,
+  INVALID_CREDENTIALS,
+  NOT_FOUND,
+  LOGIN_SUCCESSFUL,
+  UPDATE_SUCCESSFUL,
+  AN_ERROR_OCCURRED,
+  DELETED_SUCCESSFULLY,
+} = require("../utils/api.messages");
 
 module.exports = {
-  findOne: (req, res) => {
-    Admin.findOne({ _id: req.params.admin_id })
-      .then((admin) => res.json({ admin }))
-      .catch((err) => {
-        console.log(err);
+  // TODO: use try and catch and throw an error if ID is not passed or defined
+  findById: (req, res) => {
+    const adminId = req.params.adminId;
+
+    Admin.findById(adminId)
+      .select("-password -__v")
+      .then((admin) => {
+        if (!admin) {
+          throw new Error(NOT_FOUND);
+        }
+
+        return res.json(admin);
+      })
+      .catch((error) => {
         return res.json({
           success: false,
-          message: err,
+          message: error.message,
         });
       });
   },
-  find: (req, res) => {
-    Admin.find()
-      .limit(10)
-      .exec((err, admins) => {
-        if (err) {
-          console.log(err);
-          return res.json({
-            success: false,
-            message: err,
-          });
-        }
-
-        return res.json({ admins });
-      });
-  },
+  // TODO: use try-catch and async await
   create: (req, res) => {
     let { username, password, email } = req.body;
 
-    bcrypt.hash(password, rounds, (err, hashPwd) => {
-      if (err) {
-        console.log(err);
-
+    bcrypt.hash(password, rounds, (error, hashPassword) => {
+      if (error) {
         return res.json({
           success: false,
-          message: err,
+          message: AN_ERROR_OCCURRED,
         });
       }
 
-      let admin = new Admin({ username, email, password: hashPwd });
+      let admin = new Admin({
+        username,
+        email,
+        password: hashPassword,
+      });
 
-      admin.save((err, result) => {
-        if (err) {
-          console.log(err);
+      admin.save((error, result) => {
+        if (error || !result) {
           return res.json({
             success: false,
-            message: err,
+            message: AN_ERROR_OCCURRED,
           });
         }
 
         return res.json({
           success: true,
-          message: "Admin added successfully",
-          id: result._id,
+          message: ADMIN_CREATED_SUCCESSFULLY,
+          id: result.id,
         });
       });
     });
   },
+  // TODO: use jwt for login
   login: (req, res) => {
     const { username, password } = req.body;
 
     Admin.findOne({ username })
       .then((result) => {
-        console.log(result);
+        if (!result) {
+          throw new Error(NOT_FOUND);
+        }
 
-        bcrypt.compare(password, result.password, (err, same) => {
-          if (err)
-            return res.json({
-              success: false,
-              msg: err,
-            });
-
-          if (!same)
-            return res.json({
-              success: false,
-              msg: "Invalid credentials",
-            });
+        bcrypt.compare(password, result.password, (error, same) => {
+          if (error || !same) {
+            throw new Error(INVALID_CREDENTIALS);
+          }
 
           return res.json({
             success: true,
-            message: "Admin logged-in successfully",
-            id: result._id,
+            message: LOGIN_SUCCESSFUL,
+            id: result.id,
           });
         });
       })
-      .catch((err) => {
+      .catch((error) => {
         return res.json({
           success: false,
-          message: "No admin found",
+          message: error.message,
         });
       });
   },
   update: (req, res) => {
     const email = req.body.email;
-    const admin_id = req.params.admin_id;
+    const adminId = req.params.adminId;
 
-    Admin.findOne({ _id: admin_id }, (err, admin) => {
-      if (err) {
-        console.log(err);
-        return res.json({ success: false, msg: err });
-      }
+    Admin.findById(adminId)
+      .then((result) => {
+        if (!result) {
+          throw new Error(NOT_FOUND);
+        }
 
-      if (!admin) return res.json({ success: false, msg: "Admin no found" });
+        result.email = email;
 
-      admin.email = email;
+        result.save((error, updatedResult) => {
+          if (error || !updatedResult) {
+            throw new Error(AN_ERROR_OCCURRED);
+          }
 
-      admin.save((err, updatedAdmin) => {
-        if (err) {
-          console.log(err);
-          return res.json({ success: false, msg: err });
+          return res.json({
+            success: true,
+            message: UPDATE_SUCCESSFUL,
+            id: updatedResult.id,
+          });
+        });
+      })
+      .catch((error) => {
+        return res.json({
+          success: false,
+          message: error.message,
+        });
+      });
+  },
+  delete_: (req, res) => {
+    const adminId = req.params.adminId;
+
+    Admin.findByIdAndDelete(adminId)
+      .then((result) => {
+        if (!result) {
+          throw new Error(NOT_FOUND);
         }
 
         return res.json({
           success: true,
-          msg: "Admin details updated",
-          id: updatedAdmin._id,
+          message: DELETED_SUCCESSFULLY,
+          id: result.id,
+        });
+      })
+      .catch((error) => {
+        return res.json({
+          success: false,
+          message: error.message,
         });
       });
-    });
-  },
-  delete_: (req, res) => {
-    const admin_id = req.params.admin_id;
-
-    Admin.findOneAndRemove({ _id: admin_id }, (err, deletedTenant) => {
-      if (err) {
-        console.log(err);
-        return res.json({ success: false, msg: err });
-      }
-
-      if (!deletedTenant)
-        return res.json({ success: false, msg: "admin no found" });
-
-      return res.json({
-        success: true,
-        msg: "Admin details deleted successfully",
-        id: deletedTenant._id,
-      });
-    });
   },
 };
