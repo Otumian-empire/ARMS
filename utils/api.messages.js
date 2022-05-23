@@ -7,4 +7,5 @@ module.exports = {
   DELETED_SUCCESSFULLY: "Deleted successfully",
   ADMIN_CREATED_SUCCESSFULLY: "Admin created successfully",
   APARTMENT_CREATED_SUCCESSFULLY: "Apartment created successfully",
+  TENANT_CREATED_SUCCESSFULLY: "Tenant added successfully",
 };

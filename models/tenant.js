@@ -33,7 +33,7 @@ const TenantSchemaStructure = {
     required: true,
   },
   kin: {
-    full_name: {
+    fullName: {
       type: String,
       required: true,
     },

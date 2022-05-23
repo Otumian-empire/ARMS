@@ -11,6 +11,7 @@ const { port } = require("./utils/app.constant");
 const app = express();
 // Middleware
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 // Http logger
 app.use(logger("dev"));

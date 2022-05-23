@@ -1,7 +1,7 @@
 const tenantRouter = require("express").Router();
 const {
   find,
-  findOne,
+  findById,
   create,
   login,
   update,
@@ -12,7 +12,7 @@ const {
 tenantRouter.get("/", find);
 
 // fetch a tenant
-tenantRouter.get("/:tenant_id", findOne);
+tenantRouter.get("/:tenantId", findById);
 
 // create a tenant - add tenant data
 tenantRouter.post("/", create);

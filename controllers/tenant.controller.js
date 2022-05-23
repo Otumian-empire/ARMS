@@ -1,85 +1,96 @@
 const bcrypt = require("bcrypt");
 
-const { rounds } = require("../utils/app.constant");
 const Tenant = require("../models/tenant").Tenant;
+const { rounds } = require("../utils/app.constant");
+const {
+  NOT_FOUND,
+  TENANT_CREATED_SUCCESSFULLY,
+  AN_ERROR_OCCURRED,
+} = require("../utils/api.messages");
 
 module.exports = {
-  find: (req, res) => {
+  find: (_req, res) => {
     Tenant.find()
       .limit(10)
-      .exec((err, tenants) => {
-        if (err)
-          return res.json({
-            success: false,
-            message: err,
-          });
+      .exec()
+      .then((tenants) => {
+        if (!tenants) {
+          throw new Error(NOT_FOUND);
+        }
 
-        return res.json({ tenants });
-      });
-  },
-  findOne: (req, res) => {
-    Tenant.findOne({ _id: req.params.tenant_id })
-      .then((tenant) => res.json({ tenant }))
-      .catch((err) => {
-        console.log(err);
+        return res.json(tenants);
+      })
+      .catch((error) => {
         return res.json({
           success: false,
-          message: err,
+          message: error.message,
+        });
+      });
+  },
+  findById: (req, res) => {
+    const tenantId = req.params.tenantId;
+    Tenant.findById(tenantId)
+      .then((tenant) => res.json(tenant))
+      .catch((error) => {
+        console.log(error);
+        return res.json({
+          success: false,
+          message: error.message,
         });
       });
   },
   create: (req, res) => {
     let {
-      full_name,
+      fullName,
       username,
       password,
       email,
       phone,
-      date_of_birth,
-      address_of_previous_residence,
-      kins_full_name,
-      kins_email,
-      kins_phone,
-      kins_residence_address,
+      dob,
+      prevResidenceAddress,
+      kin,
     } = req.body;
 
-    bcrypt.hash(password, rounds, (err, hashPwd) => {
-      if (err) {
-        console.log(err);
+    if (!kin.fullName || !kin.email || !kin.phone || !kin.residenceAddress) {
+      return res.json({
+        success: false,
+        message: err,
+      });
+    }
+
+    bcrypt.hash(password, rounds, (error, hashedPassword) => {
+      if (error || !hashedPassword) {
         return res.json({
           success: false,
-          message: err,
+          message: error.message,
         });
       }
 
-      Tenant.create({
-        full_name,
+      let tenant = new Tenant({
+        fullName,
         username,
-        password: hashPwd,
+        password: hashedPassword,
         email,
         phone,
-        date_of_birth,
-        address_of_previous_residence,
-        kins_full_name,
-        kins_email,
-        kins_phone,
-        kins_residence_address,
-      })
-        .then((result) => {
-          if (result)
-            return res.json({
-              success: true,
-              message: "Tenant added successfully",
-              id: result._id,
-            });
-        })
-        .catch((err) => {
-          console.log(err);
+        dob,
+        prevResidenceAddress,
+        kin,
+      });
+
+      tenant.save((error, result) => {
+        if (error || !result) {
           return res.json({
             success: false,
-            message: err,
+            message: AN_ERROR_OCCURRED,
           });
+        }
+
+        return res.json({
+          success: true,
+          message: TENANT_CREATED_SUCCESSFULLY,
+          id: result.id,
         });
+      });
     });
   },
   login: (req, res) => {
