@@ -6,6 +6,10 @@ const {
   NOT_FOUND,
   TENANT_CREATED_SUCCESSFULLY,
   AN_ERROR_OCCURRED,
+  INVALID_CREDENTIALS,
+  UPDATE_SUCCESSFUL,
+  DELETED_SUCCESSFULLY,
+  KIN_IS_REQUIRED,
 } = require("../utils/api.messages");
 
 module.exports = {
@@ -54,7 +58,7 @@ module.exports = {
     if (!kin.fullName || !kin.email || !kin.phone || !kin.residenceAddress) {
       return res.json({
         success: false,
-        message: err,
+        message: KIN_IS_REQUIRED,
       });
     }
 
@@ -98,18 +102,13 @@ module.exports = {
 
     Tenant.findOne({ username })
       .then((result) => {
-        bcrypt.compare(password, result.password, (err, same) => {
-          if (err)
+        bcrypt.compare(password, result.password, (error, same) => {
+          if (error || !same) {
             return res.json({
               success: false,
-              msg: err,
+              message: INVALID_CREDENTIALS,
             });
-
-          if (!same)
-            return res.json({
-              success: false,
-              msg: "Invalid credentials",
-            });
+          }
 
           return res.json({
             success: true,
@@ -118,60 +117,79 @@ module.exports = {
           });
         });
       })
-      .catch((err) => {
+      .catch((error) => {
         return res.json({
           success: false,
-          message: "No tenant found",
+          message: AN_ERROR_OCCURRED,
         });
       });
   },
   update: (req, res) => {
-    const { email, phone, kins_email, kins_phone } = req.body;
-    const tenant_id = req.params.tenant_id;
+    const { email, phone, kin } = req.body;
+    const tenantId = req.params.tenantId;
 
-    Tenant.findOne({ _id: tenant_id }, (err, tenant) => {
-      if (err) {
-        console.log(err);
-        return res.json({ success: false, msg: err });
-      }
-
-      if (!tenant) return res.json({ success: false, msg: "Tenant no found" });
-
-      if (email !== undefined) tenant.email = email;
-      if (phone !== undefined) tenant.phone = phone;
-      if (kins_email !== undefined) tenant.kins_email = kins_email;
-      if (kins_phone !== undefined) tenant.kins_phone = kins_phone;
-
-      tenant.save((err, updatedTenant) => {
-        if (err) {
-          console.log(err);
-          return res.json({ success: false, msg: err });
+    Tenant.findById(tenantId)
+      .then((tenant) => {
+        if (!tenant) {
+          throw new Error(INVALID_CREDENTIALS);
         }
 
+        if (email) {
+          tenant.email = email;
+        }
+
+        if (phone) {
+          tenant.phone = phone;
+        }
+
+        if (kin) {
+          if (kin.email) {
+            tenant.kin.email = kin.email;
+          }
+
+          if (kin.phone) {
+            tenant.kin.phone = kin.phone;
+          }
+        }
+
+        tenant.save((error, updatedTenant) => {
+          if (error || !updatedTenant) {
+            return res.json({
+              success: false,
+              message: AN_ERROR_OCCURRED,
+            });
+          }
+
+          return res.json({
+            success: true,
+            message: UPDATE_SUCCESSFUL,
+            id: updatedTenant.id,
+          });
+        });
+      })
+      .catch((error) => {
         return res.json({
-          success: true,
-          msg: "Tenant details updated",
-          id: updatedTenant._id,
+          success: false,
+          message: error.message,
         });
       });
-    });
   },
   delete_: (req, res) => {
-    const tenant_id = req.params.tenant_id;
+    const tenantId = req.params.tenantId;
 
-    Tenant.findOneAndRemove({ _id: tenant_id }, (err, deletedTenant) => {
-      if (err) {
-        console.log(err);
-        return res.json({ success: false, msg: err });
+    Tenant.findByIdAndRemove(tenantId, (error, deletedTenant) => {
+      console.log({ error, deletedTenant });
+      if (error || !deletedTenant) {
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS,
+        });
       }
-
-      if (!deletedTenant)
-        return res.json({ success: false, msg: "tenant no found" });
 
       return res.json({
         success: true,
-        msg: "Tenant details deleted successfully",
-        id: deletedTenant._id,
+        message: DELETED_SUCCESSFULLY,
+        id: deletedTenant.id,
       });
     });
   },

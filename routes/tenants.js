@@ -22,9 +22,9 @@ tenantRouter.post("/login", login);
 
 // update - tenant may update only their email and phone number
 // this applies for the next of kins
-tenantRouter.put("/:tenant_id", update);
+tenantRouter.put("/:tenantId", update);
 
 // delete tenant data - admin privileges is needed
-tenantRouter.delete("/:tenant_id", delete_);
+tenantRouter.delete("/:tenantId", delete_);
 
 module.exports = { tenantRouter };
