@@ -9,4 +9,5 @@ module.exports = {
   APARTMENT_CREATED_SUCCESSFULLY: "Apartment created successfully",
   TENANT_CREATED_SUCCESSFULLY: "Tenant added successfully",
   KIN_IS_REQUIRED: "Kin is required",
+  CASH_ADDED_SUCCESSFULLY: "Cash deposited successfully",
 };

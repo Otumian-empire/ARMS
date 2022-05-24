@@ -178,7 +178,6 @@ module.exports = {
     const tenantId = req.params.tenantId;
 
     Tenant.findByIdAndRemove(tenantId, (error, deletedTenant) => {
-      console.log({ error, deletedTenant });
       if (error || !deletedTenant) {
         return res.json({
           success: false,

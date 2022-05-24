@@ -1,66 +1,111 @@
 const Cash = require("../models/cash").Cash;
+const Tenant = require("../models/tenant").Tenant;
+const {
+  AN_ERROR_OCCURRED,
+  CASH_ADDED_SUCCESSFULLY,
+  INVALID_CREDENTIALS,
+  DELETED_SUCCESSFULLY,
+} = require("../utils/api.messages");
 const { generateToken } = require("../utils/functions");
 
 module.exports = {
-  find: (req, res) => {
+  find: (_req, res) => {
     Cash.find()
+      .select("-__v")
       .limit(10)
-      .exec((err, cashes) => {
-        if (err)
+      .exec((error, cashes) => {
+        if (error || !cashes)
           return res.json({
             success: false,
-            message: err,
+            message: AN_ERROR_OCCURRED,
           });
 
-        return res.json({ cashes });
+        return res.json(cashes);
       });
   },
-  findOne: (req, res) => {
-    Cash.findOne({ _id: req.params.tenantId })
-      .then((cash) => res.json({ cash }))
-      .catch((err) => {
-        console.log(err);
+  findByTenantId: (req, res) => {
+    const tenantId = req.params.tenantId;
+
+    if (!tenantId) {
+      return res.json({
+        success: false,
+        message: INVALID_CREDENTIALS,
+      });
+    }
+
+    Cash.find({ tenantId })
+      .select("-__v")
+      .limit(10)
+      .then((results) => {
+        return res.json(results);
+      })
+      .catch((error) => {
         return res.json({
           success: false,
-          message: err,
+          message: error.message,
         });
       });
   },
   create: (req, res) => {
     const tenantId = req.params.tenantId;
-    const token = generateToken();
-    const amount = req.body.amount;
+    const amount = Number(req.body.amount) || 0;
 
-    Cash.create({ tenantId, token, amount })
+    if (!tenantId || !amount) {
+      return res.json({
+        success: false,
+        message: AN_ERROR_OCCURRED,
+      });
+    }
+
+    const token = generateToken();
+
+    Tenant.findById(tenantId)
       .then((result) => {
-        if (result)
-          return res.json({
-            success: true,
-            message: "Cash deposited successfully",
-            id: result._id,
+        if (!result) {
+          throw new Error(INVALID_CREDENTIALS);
+        }
+
+        Cash.create({ tenantId, token, amount })
+          .then((result) => {
+            if (!result) {
+              throw new Error(AN_ERROR_OCCURRED);
+            }
+
+            return res.json({
+              success: true,
+              message: CASH_ADDED_SUCCESSFULLY,
+              id: result.id,
+            });
+          })
+          .catch((error) => {
+            return res.json({
+              success: false,
+              message: error.message,
+            });
           });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
         return res.json({
           success: false,
-          message: err,
+          message: error.message,
         });
       });
   },
   delete_: (req, res) => {
-    Cash.findOneAndRemove({ _id: req.params.cashId }, (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.json({ success: false, msg: err });
-      }
+    const cashId = req.params.cashId;
 
-      if (!result) return res.json({ success: false, msg: "tenant no found" });
+    Cash.findByIdAndRemove(cashId, (error, deletedCash) => {
+      if (error || !deletedCash) {
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS,
+        });
+      }
 
       return res.json({
         success: true,
-        msg: "Cash details deleted successfully",
-        id: result._id,
+        message: DELETED_SUCCESSFULLY,
+        id: deletedCash.id,
       });
     });
   },
