@@ -14,6 +14,7 @@ module.exports = {
   find: (_req, res) => {
     Rent.find()
       .limit(10)
+      .select("-__v")
       .exec((error, rents) => {
         if (error || !rents) {
           return res.json({
@@ -26,31 +27,15 @@ module.exports = {
       });
   },
   findOneByRentId: (req, res) => {
-    Rent.findOne({ _id: req.params.Rent_id })
-      .then((rent) => res.json({ rent }))
+    const rentId = req.params.rentId;
+
+    Rent.findById(rentId)
+      .select("-__v")
+      .then((rent) => res.json(rent))
       .catch((error) => {
-        console.log(error);
         return res.json({
           success: false,
-          message: error,
-        });
-      });
-  },
-  findOneByTenantId: (req, res) => {
-    Rent.find()
-      .then((rents) => {
-        if (rents) {
-          rents.filter((rent) => {
-            if (rent.tenant === req.params.Tenant_id) return res.json({ rent });
-          });
-        }
-        return res.json({});
-      })
-      .catch((error) => {
-        console.log(error);
-        return res.json({
-          success: false,
-          message: error,
+          message: error.message,
         });
       });
   },
@@ -79,12 +64,17 @@ module.exports = {
               throw new Error(INVALID_CREDENTIALS);
             }
 
-            Cash.find({
-              id: cashId,
-              tenantId,
-            })
-              .then((cash) => {
-                if (!cash) {
+            Cash.find()
+              .then((cashes) => {
+                if (!cashes) {
+                  throw new Error(NOT_FOUND);
+                }
+
+                const tenantCashes = cashes.filter((cash) => {
+                  return cash.id === cashId && cash.tenantId == tenantId;
+                });
+
+                if (tenantCashes.length !== 1) {
                   throw new Error(NOT_FOUND);
                 }
 
@@ -129,38 +119,6 @@ module.exports = {
         });
       });
   },
-  update: (req, res) => {
-    const { email, phone } = req.body;
-    const Rent_id = req.params.Rent_id;
-
-    Rent.findOne({ _id: Rent_id }, (error, Rent) => {
-      if (error) {
-        console.log(error);
-        return res.json({ success: false, msg: error });
-      }
-
-      if (!Rent) return res.json({ success: false, msg: "Rent no found" });
-
-      if (email !== undefined) Rent.email = email;
-      if (phone !== undefined) Rent.phone = phone;
-      if (kins_email !== undefined) Rent.kins_email = kins_email;
-      if (kins_phone !== undefined) Rent.kins_phone = kins_phone;
-
-      Rent.save((error, updatedRent) => {
-        if (error) {
-          console.log(error);
-          return res.json({ success: false, msg: error });
-        }
-
-        return res.json({
-          success: true,
-          msg: "Rent details updated",
-          id: updatedRent._id,
-        });
-      });
-    });
-  },
-
   delete_: (req, res) => {
     const Rent_id = req.params.rentId;
 
