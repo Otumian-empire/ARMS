@@ -19,7 +19,7 @@ rentRouter.get("/:rentId", findOneByRentId);
 rentRouter.get("/:tenantId", findOneByTenantId);
 
 // create a Rent - add Rent data
-rentRouter.post("/", create);
+rentRouter.post("/:tenantId", create);
 
 rentRouter.put("/:rentId", update);
 

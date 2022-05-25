@@ -1,27 +1,38 @@
-const { Rent } = require("../models/rent");
+const {
+  AN_ERROR_OCCURRED,
+  RENT_ADDED_SUCCESSFULLY,
+  INVALID_CREDENTIALS,
+  NOT_FOUND,
+} = require("../utils/api.messages");
+
+const Rent = require("../models/rent").Rent;
+const Tenant = require("../models/tenant").Tenant;
+const Apartment = require("../models/apartment").Apartment;
+const Cash = require("../models/cash").Cash;
 
 module.exports = {
-  find: (req, res) => {
+  find: (_req, res) => {
     Rent.find()
       .limit(10)
-      .exec((err, rents) => {
-        if (err)
+      .exec((error, rents) => {
+        if (error || !rents) {
           return res.json({
             success: false,
-            message: err,
+            message: AN_ERROR_OCCURRED,
           });
+        }
 
-        return res.json({ rents });
+        return res.json(rents);
       });
   },
   findOneByRentId: (req, res) => {
     Rent.findOne({ _id: req.params.Rent_id })
       .then((rent) => res.json({ rent }))
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.log(error);
         return res.json({
           success: false,
-          message: err,
+          message: error,
         });
       });
   },
@@ -35,39 +46,86 @@ module.exports = {
         }
         return res.json({});
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.log(error);
         return res.json({
           success: false,
-          message: err,
+          message: error,
         });
       });
   },
   create: (req, res) => {
-    let {
-      tenant, // tenant_id
-      apartment, // apartment_id
-      cash, // cash_id
-    } = req.body;
+    const tenantId = req.params.tenantId;
+    // console.log(tenantId);
+    const { apartmentId, cashId } = req.body;
+    // console.log({ apartmentId, cashId });
 
-    Rent.create({
-      tenant,
-      apartment,
-      cash,
-    })
-      .then((result) => {
-        if (result)
-          return res.json({
-            success: true,
-            message: "Rent added successfully",
-            id: result._id,
+    if (!tenantId || !apartmentId || !cashId) {
+      return res.json({
+        success: false,
+        message: INVALID_CREDENTIALS,
+      });
+    }
+
+    Tenant.findById(tenantId)
+      .then((tenant) => {
+        if (!tenant) {
+          throw new Error(INVALID_CREDENTIALS);
+        }
+
+        Apartment.findById(apartmentId)
+          .then((apartment) => {
+            if (!apartment) {
+              throw new Error(INVALID_CREDENTIALS);
+            }
+
+            Cash.find({
+              id: cashId,
+              tenantId,
+            })
+              .then((cash) => {
+                if (!cash) {
+                  throw new Error(NOT_FOUND);
+                }
+
+                Rent.create({
+                  tenantId,
+                  apartmentId,
+                  cashId,
+                })
+                  .then((rent) => {
+                    if (rent)
+                      return res.json({
+                        success: true,
+                        message: RENT_ADDED_SUCCESSFULLY,
+                        id: rent.id,
+                      });
+                  })
+                  .catch((error) => {
+                    return res.json({
+                      success: false,
+                      message: error.message,
+                    });
+                  });
+              })
+              .catch((error) => {
+                return res.json({
+                  success: false,
+                  message: error.message,
+                });
+              });
+          })
+          .catch((error) => {
+            return res.json({
+              success: false,
+              message: error.message,
+            });
           });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
         return res.json({
           success: false,
-          message: err,
+          message: error.message,
         });
       });
   },
@@ -75,10 +133,10 @@ module.exports = {
     const { email, phone } = req.body;
     const Rent_id = req.params.Rent_id;
 
-    Rent.findOne({ _id: Rent_id }, (err, Rent) => {
-      if (err) {
-        console.log(err);
-        return res.json({ success: false, msg: err });
+    Rent.findOne({ _id: Rent_id }, (error, Rent) => {
+      if (error) {
+        console.log(error);
+        return res.json({ success: false, msg: error });
       }
 
       if (!Rent) return res.json({ success: false, msg: "Rent no found" });
@@ -88,10 +146,10 @@ module.exports = {
       if (kins_email !== undefined) Rent.kins_email = kins_email;
       if (kins_phone !== undefined) Rent.kins_phone = kins_phone;
 
-      Rent.save((err, updatedRent) => {
-        if (err) {
-          console.log(err);
-          return res.json({ success: false, msg: err });
+      Rent.save((error, updatedRent) => {
+        if (error) {
+          console.log(error);
+          return res.json({ success: false, msg: error });
         }
 
         return res.json({
@@ -106,10 +164,10 @@ module.exports = {
   delete_: (req, res) => {
     const Rent_id = req.params.rentId;
 
-    Rent.findOneAndRemove({ _id: Rent_id }, (err, deletedRent) => {
-      if (err) {
-        console.log(err);
-        return res.json({ success: false, msg: err });
+    Rent.findOneAndRemove({ _id: Rent_id }, (error, deletedRent) => {
+      if (error) {
+        console.log(error);
+        return res.json({ success: false, msg: error });
       }
 
       if (!deletedRent)

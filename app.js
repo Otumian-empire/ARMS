@@ -6,6 +6,7 @@ const { adminRouter } = require("./routes/admin");
 const { apartmentRouter } = require("./routes/apartments");
 const { tenantRouter } = require("./routes/tenants");
 const { cashRouter } = require("./routes/cash");
+const { rentRouter } = require("./routes/rent");
 const { port } = require("./utils/app.constant");
 
 const app = express();
@@ -24,6 +25,7 @@ app.use("/admin", adminRouter);
 app.use("/apartment", apartmentRouter);
 app.use("/tenant", tenantRouter);
 app.use("/cash", cashRouter);
+app.use("/rent", rentRouter);
 
 app.listen(port, console.log(`server started on port ${port}`));
 
