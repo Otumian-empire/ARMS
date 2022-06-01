@@ -1,6 +1,7 @@
 const mongoose = require("./connection");
 
 const RentSchemaStructure = {
+  // TODO: think about whether a use can rent multiple rooms
   tenantId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

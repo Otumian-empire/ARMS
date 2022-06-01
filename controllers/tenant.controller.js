@@ -10,6 +10,7 @@ const {
   UPDATE_SUCCESSFUL,
   DELETED_SUCCESSFULLY,
   KIN_IS_REQUIRED,
+  LOGIN_SUCCESSFUL,
 } = require("../utils/api.messages");
 
 module.exports = {
@@ -32,11 +33,17 @@ module.exports = {
       });
   },
   findById: (req, res) => {
-    const tenantId = req.params.tenantId;
-    Tenant.findById(tenantId)
-      .then((tenant) => res.json(tenant))
+    const id = req.params.id;
+
+    Tenant.findById(id)
+      .then((tenant) => {
+        if (!tenant) {
+          throw new Error(NOT_FOUND);
+        }
+
+        return res.json(tenant);
+      })
       .catch((error) => {
-        console.log(error);
         return res.json({
           success: false,
           message: error.message,
@@ -82,7 +89,7 @@ module.exports = {
       });
 
       tenant.save((error, result) => {
-        if (error || !result) {
+        if (error) {
           return res.json({
             success: false,
             message: AN_ERROR_OCCURRED,
@@ -112,8 +119,8 @@ module.exports = {
 
           return res.json({
             success: true,
-            message: "Tenant logged-in successfully",
-            id: result._id,
+            message: LOGIN_SUCCESSFUL,
+            id: result.id,
           });
         });
       })
@@ -126,9 +133,9 @@ module.exports = {
   },
   update: (req, res) => {
     const { email, phone, kin } = req.body;
-    const tenantId = req.params.tenantId;
+    const id = req.params.id;
 
-    Tenant.findById(tenantId)
+    Tenant.findById(id)
       .then((tenant) => {
         if (!tenant) {
           throw new Error(INVALID_CREDENTIALS);
@@ -175,9 +182,9 @@ module.exports = {
       });
   },
   delete_: (req, res) => {
-    const tenantId = req.params.tenantId;
+    const id = req.params.id;
 
-    Tenant.findByIdAndRemove(tenantId, (error, deletedTenant) => {
+    Tenant.findByIdAndRemove(id, (error, deletedTenant) => {
       if (error || !deletedTenant) {
         return res.json({
           success: false,

@@ -24,21 +24,19 @@ module.exports = {
       });
   },
   findByTenantId: (req, res) => {
-    const tenantId = req.params.tenantId;
+    const id = req.params.id;
 
-    if (!tenantId) {
+    if (!id) {
       return res.json({
         success: false,
         message: INVALID_CREDENTIALS,
       });
     }
 
-    Cash.find({ tenantId })
+    Cash.find({ tenantId: id })
       .select("-__v")
       .limit(10)
-      .then((results) => {
-        return res.json(results);
-      })
+      .then((results) => res.json(results))
       .catch((error) => {
         return res.json({
           success: false,
@@ -47,10 +45,10 @@ module.exports = {
       });
   },
   create: (req, res) => {
-    const tenantId = req.params.tenantId;
+    const id = req.params.id;
     const amount = Number(req.body.amount) || 0;
 
-    if (!tenantId || !amount) {
+    if (!id || !amount) {
       return res.json({
         success: false,
         message: AN_ERROR_OCCURRED,
@@ -59,13 +57,17 @@ module.exports = {
 
     const token = generateToken();
 
-    Tenant.findById(tenantId)
+    Tenant.findById(id)
       .then((result) => {
         if (!result) {
           throw new Error(INVALID_CREDENTIALS);
         }
 
-        Cash.create({ tenantId, token, amount })
+        Cash.create({
+          tenantId: id,
+          token,
+          amount,
+        })
           .then((result) => {
             if (!result) {
               throw new Error(AN_ERROR_OCCURRED);
@@ -92,9 +94,9 @@ module.exports = {
       });
   },
   delete_: (req, res) => {
-    const cashId = req.params.cashId;
+    const id = req.params.id;
 
-    Cash.findByIdAndRemove(cashId, (error, deletedCash) => {
+    Cash.findByIdAndRemove(id, (error, deletedCash) => {
       if (error || !deletedCash) {
         return res.json({
           success: false,

@@ -10,6 +10,8 @@ const {
 module.exports = {
   find: (_req, res) => {
     Apartment.find()
+      .limit(10)
+      .exec()
       .select("-__v")
       .then((apartments) => res.json(apartments))
       .catch((_error) => {
@@ -20,9 +22,9 @@ module.exports = {
       });
   },
   findById: (req, res) => {
-    const apartmentId = req.params.apartmentId;
+    const id = req.params.id;
 
-    Apartment.findById(apartmentId)
+    Apartment.findById(id)
       .select("-__v")
       .then((apartment) => {
         if (!apartment) {
@@ -64,10 +66,10 @@ module.exports = {
     });
   },
   update: (req, res) => {
-    const apartmentId = req.params.apartmentId;
+    const id = req.params.id;
     const { roomNumber, description, price } = req.body;
 
-    Apartment.findById(apartmentId)
+    Apartment.findById(id)
       .then((apartment) => {
         if (!apartment) {
           throw new Error(NOT_FOUND);
@@ -86,7 +88,7 @@ module.exports = {
         }
 
         apartment.save((error, updatedApartment) => {
-          if (error || !updatedApartment) {
+          if (error) {
             return res.json({
               success: false,
               message: AN_ERROR_OCCURRED,
@@ -108,21 +110,25 @@ module.exports = {
       });
   },
   delete_: (req, res) => {
-    const apartmentId = req.params.apartmentId;
+    const id = req.params.id;
 
-    Apartment.findByIdAndDelete(apartmentId, (error, deletedApartment) => {
-      if (error || !deletedApartment) {
+    Apartment.findByIdAndDelete(id)
+      .then((result) => {
+        if (!result) {
+          throw new Error(NOT_FOUND);
+        }
+
+        return res.json({
+          success: true,
+          message: DELETED_SUCCESSFULLY,
+          id: result.id,
+        });
+      })
+      .catch((error) => {
         return res.json({
           success: false,
-          message: AN_ERROR_OCCURRED,
+          message: error.message,
         });
-      }
-
-      return res.json({
-        success: true,
-        message: DELETED_SUCCESSFULLY,
-        id: deletedApartment.id,
       });
-    });
   },
 };

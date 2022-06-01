@@ -6,17 +6,33 @@ const {
   create,
   delete_,
 } = require("../controllers/rent.controller");
+const joiMiddleware = require("../utils/joi.middleware");
+const {
+  idRequestParams,
+  rentCreateRequestBody,
+} = require("../utils/joi.schema");
 
 // fetch all Rents
 rentRouter.get("/", find);
 
 // fetch a Rent by Rent id
-rentRouter.get("/:rentId", findOneByRentId);
+rentRouter.get(
+  "/:id",
+  joiMiddleware(idRequestParams, "params"),
+  findOneByRentId
+);
 
 // create a Rent - add Rent data
-rentRouter.post("/:tenantId", create);
+rentRouter.post(
+  "/:id",
+  [
+    joiMiddleware(idRequestParams, "params"),
+    joiMiddleware(rentCreateRequestBody),
+  ],
+  create
+);
 
 // delete Rent data - admin privileges is needed
-rentRouter.delete("/:rentId", delete_);
+rentRouter.delete("/:id", joiMiddleware(idRequestParams, "params"), delete_);
 
 module.exports = { rentRouter };

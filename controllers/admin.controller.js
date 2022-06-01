@@ -15,9 +15,9 @@ const {
 module.exports = {
   // TODO: use try and catch and throw an error if ID is not passed or defined
   findById: (req, res) => {
-    const adminId = req.params.adminId;
+    const id = req.params.id;
 
-    Admin.findById(adminId)
+    Admin.findById(id)
       .select("-password -__v")
       .then((admin) => {
         if (!admin) {
@@ -52,7 +52,7 @@ module.exports = {
       });
 
       admin.save((error, result) => {
-        if (error || !result) {
+        if (error) {
           return res.json({
             success: false,
             message: AN_ERROR_OCCURRED,
@@ -78,7 +78,7 @@ module.exports = {
         }
 
         bcrypt.compare(password, result.password, (error, same) => {
-          if (error || !same) {
+          if (error) {
             return res.json({
               success: false,
               message: INVALID_CREDENTIALS,
@@ -100,19 +100,21 @@ module.exports = {
       });
   },
   update: (req, res) => {
+    const id = req.params.id;
     const email = req.body.email;
-    const adminId = req.params.adminId;
 
-    Admin.findById(adminId)
+    Admin.findById(id)
       .then((result) => {
         if (!result) {
           throw new Error(NOT_FOUND);
         }
 
-        result.email = email;
+        if (email) {
+          result.email = email;
+        }
 
         result.save((error, updatedResult) => {
-          if (error || !updatedResult) {
+          if (error) {
             return res.json({
               success: false,
               message: AN_ERROR_OCCURRED,
@@ -134,9 +136,9 @@ module.exports = {
       });
   },
   delete_: (req, res) => {
-    const adminId = req.params.adminId;
+    const id = req.params.id;
 
-    Admin.findByIdAndDelete(adminId)
+    Admin.findByIdAndDelete(id)
       .then((result) => {
         if (!result) {
           throw new Error(NOT_FOUND);

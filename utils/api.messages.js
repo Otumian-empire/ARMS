@@ -1,3 +1,5 @@
+const { MINIMUM_PASSWORD_SIZE: min_pwd_size } = require("./app.constant");
+
 module.exports = {
   INVALID_CREDENTIALS: "Invalid credentials",
   LOGIN_SUCCESSFUL: "Logged in successfully",
@@ -8,7 +10,20 @@ module.exports = {
   ADMIN_CREATED_SUCCESSFULLY: "Admin created successfully",
   APARTMENT_CREATED_SUCCESSFULLY: "Apartment created successfully",
   TENANT_CREATED_SUCCESSFULLY: "Tenant added successfully",
-  KIN_IS_REQUIRED: "Kin is required",
   CASH_ADDED_SUCCESSFULLY: "Cash deposited successfully",
   RENT_ADDED_SUCCESSFULLY: "Rent added successfully",
+  KIN_IS_REQUIRED: "Kin is required",
+  ID_PARAMETER_REQUIRED: "Parameter ID is required",
+  ROOM_NUMBER_REQUIRED: "Room number is required",
+  PRICE_REQUIRED: "Price is required",
+  AMOUNT_REQUIRED: "Amount is required",
+  USERNAME_REQUIRED: "Username is required",
+  FULL_NAME_REQUIRED: "Full name is required",
+  EMAIL_REQUIRED: "Email is required",
+  PHONE_REQUIRED: "Phone number is required",
+  DOB_REQUIRED: "Date of birth is required",
+  PREVIOUS_ADDRESS_REQUIRED: "Previous resident address is required",
+  USERNAME_REQUIRED: "Username is required",
+  PASSWORD_REQUIRED: `Password must be of at least ${min_pwd_size} characters, and contain at least one uppercase, lowercase and a number`,
+  APARTMENT_IS_OCCUPIED: "Apartment is occupied",
 };

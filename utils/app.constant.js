@@ -6,4 +6,6 @@ module.exports = {
   REFRESH_JWT_SECRET: process.env.REFRESH_JWT_SECRET,
   MONGODB_URI: process.env.MONGODB_URI,
   port: process.env.PORT || 3000,
+  MINIMUM_PASSWORD_SIZE: 6,
+  ONE: 1,
 };

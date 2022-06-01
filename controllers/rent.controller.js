@@ -3,6 +3,8 @@ const {
   RENT_ADDED_SUCCESSFULLY,
   INVALID_CREDENTIALS,
   NOT_FOUND,
+  DELETED_SUCCESSFULLY,
+  APARTMENT_IS_OCCUPIED,
 } = require("../utils/api.messages");
 
 const Rent = require("../models/rent").Rent;
@@ -27,11 +29,17 @@ module.exports = {
       });
   },
   findOneByRentId: (req, res) => {
-    const rentId = req.params.rentId;
+    const id = req.params.id;
 
-    Rent.findById(rentId)
+    Rent.findById(id)
       .select("-__v")
-      .then((rent) => res.json(rent))
+      .then((rent) => {
+        if (!rent) {
+          throw new Error(NOT_FOUND);
+        }
+
+        return res.json(rent);
+      })
       .catch((error) => {
         return res.json({
           success: false,
@@ -40,55 +48,62 @@ module.exports = {
       });
   },
   create: (req, res) => {
-    const tenantId = req.params.tenantId;
-    // console.log(tenantId);
+    const id = req.params.id;
     const { apartmentId, cashId } = req.body;
-    // console.log({ apartmentId, cashId });
 
-    if (!tenantId || !apartmentId || !cashId) {
+    if (!id || !apartmentId || !cashId) {
       return res.json({
         success: false,
         message: INVALID_CREDENTIALS,
       });
     }
 
-    Tenant.findById(tenantId)
-      .then((tenant) => {
-        if (!tenant) {
+    Apartment.findById(apartmentId)
+      .then((apartment) => {
+        if (!apartment) {
           throw new Error(INVALID_CREDENTIALS);
         }
 
-        Apartment.findById(apartmentId)
-          .then((apartment) => {
-            if (!apartment) {
+        Tenant.findById(id)
+          .then((tenant) => {
+            if (!tenant) {
               throw new Error(INVALID_CREDENTIALS);
             }
 
-            Cash.find()
-              .then((cashes) => {
-                if (!cashes) {
+            Cash.find({ _id: cashId, tenantId: id })
+              .then((cash) => {
+                if (!cash) {
                   throw new Error(NOT_FOUND);
                 }
 
-                const tenantCashes = cashes.filter((cash) => {
-                  return cash.id === cashId && cash.tenantId == tenantId;
-                });
+                Rent.findOne({ apartmentId })
+                  .then((isOccupied) => {
+                    if (isOccupied) {
+                      throw new Error(APARTMENT_IS_OCCUPIED);
+                    }
 
-                if (tenantCashes.length !== 1) {
-                  throw new Error(NOT_FOUND);
-                }
+                    // TODO: add a field to the cash table that indicates the
+                    // status of cash. we can not rent with an apartment with
+                    // a used cash ID
 
-                Rent.create({
-                  tenantId,
-                  apartmentId,
-                  cashId,
-                })
-                  .then((rent) => {
-                    if (rent)
-                      return res.json({
-                        success: true,
-                        message: RENT_ADDED_SUCCESSFULLY,
-                        id: rent.id,
+                    Rent.create({
+                      tenantId: id,
+                      apartmentId,
+                      cashId,
+                    })
+                      .then((rent) => {
+                        if (rent)
+                          return res.json({
+                            success: true,
+                            message: RENT_ADDED_SUCCESSFULLY,
+                            id: rent.id,
+                          });
+                      })
+                      .catch((error) => {
+                        return res.json({
+                          success: false,
+                          message: error.message,
+                        });
                       });
                   })
                   .catch((error) => {
@@ -120,22 +135,27 @@ module.exports = {
       });
   },
   delete_: (req, res) => {
-    const Rent_id = req.params.rentId;
+    const id = req.params.id;
 
-    Rent.findOneAndRemove({ _id: Rent_id }, (error, deletedRent) => {
-      if (error) {
-        console.log(error);
-        return res.json({ success: false, msg: error });
-      }
+    Rent.findByIdAndDelete(id)
+      .then((result) => {
+        if (!result) {
+          throw new Error(NOT_FOUND);
+        }
 
-      if (!deletedRent)
-        return res.json({ success: false, msg: "Rent no found" });
-
-      return res.json({
-        success: true,
-        msg: "Rent details deleted successfully",
-        id: deletedRent._id,
+        return res.json({
+          success: true,
+          message: DELETED_SUCCESSFULLY,
+          id: result.id,
+        });
+      })
+      .catch((error) => {
+        if (error) {
+          return res.json({
+            success: false,
+            message: error.message,
+          });
+        }
       });
-    });
   },
 };
