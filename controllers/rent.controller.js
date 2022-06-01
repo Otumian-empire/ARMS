@@ -18,7 +18,9 @@ module.exports = {
       .limit(10)
       .select("-__v")
       .exec((error, rents) => {
-        if (error || !rents) {
+        logger.error(error);
+
+        if (error) {
           return res.json({
             success: false,
             message: AN_ERROR_OCCURRED,
@@ -41,6 +43,8 @@ module.exports = {
         return res.json(rent);
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -100,6 +104,8 @@ module.exports = {
                           });
                       })
                       .catch((error) => {
+                        logger.error(error);
+
                         return res.json({
                           success: false,
                           message: error.message,
@@ -107,6 +113,8 @@ module.exports = {
                       });
                   })
                   .catch((error) => {
+                    logger.error(error);
+
                     return res.json({
                       success: false,
                       message: error.message,
@@ -114,6 +122,8 @@ module.exports = {
                   });
               })
               .catch((error) => {
+                logger.error(error);
+
                 return res.json({
                   success: false,
                   message: error.message,
@@ -121,6 +131,8 @@ module.exports = {
               });
           })
           .catch((error) => {
+            logger.error(error);
+
             return res.json({
               success: false,
               message: error.message,
@@ -128,6 +140,8 @@ module.exports = {
           });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -150,6 +164,8 @@ module.exports = {
         });
       })
       .catch((error) => {
+        logger.error(error);
+
         if (error) {
           return res.json({
             success: false,

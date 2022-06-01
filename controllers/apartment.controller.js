@@ -6,6 +6,7 @@ const {
   UPDATE_SUCCESSFUL,
   DELETED_SUCCESSFULLY,
 } = require("../utils/api.messages");
+const logger = require("../config/logger");
 
 module.exports = {
   find: (_req, res) => {
@@ -14,7 +15,8 @@ module.exports = {
       .exec()
       .select("-__v")
       .then((apartments) => res.json(apartments))
-      .catch((_error) => {
+      .catch((error) => {
+        logger.error(error);
         return res.json({
           success: false,
           message: AN_ERROR_OCCURRED,
@@ -34,6 +36,8 @@ module.exports = {
         return res.json(apartment);
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -51,7 +55,9 @@ module.exports = {
     });
 
     apartment.save((error, result) => {
-      if (error || !result) {
+      if (error) {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: AN_ERROR_OCCURRED,
@@ -89,6 +95,8 @@ module.exports = {
 
         apartment.save((error, updatedApartment) => {
           if (error) {
+            logger.error(error);
+
             return res.json({
               success: false,
               message: AN_ERROR_OCCURRED,
@@ -103,6 +111,8 @@ module.exports = {
         });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -125,6 +135,8 @@ module.exports = {
         });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,

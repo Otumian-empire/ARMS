@@ -11,6 +11,7 @@ const {
   AN_ERROR_OCCURRED,
   DELETED_SUCCESSFULLY,
 } = require("../utils/api.messages");
+const logger = require("../config/logger");
 
 module.exports = {
   // TODO: use try and catch and throw an error if ID is not passed or defined
@@ -27,6 +28,8 @@ module.exports = {
         return res.json(admin);
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -39,6 +42,8 @@ module.exports = {
 
     bcrypt.hash(password, rounds, (error, hashPassword) => {
       if (error) {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: AN_ERROR_OCCURRED,
@@ -53,6 +58,8 @@ module.exports = {
 
       admin.save((error, result) => {
         if (error) {
+          logger.error(error);
+
           return res.json({
             success: false,
             message: AN_ERROR_OCCURRED,
@@ -79,6 +86,8 @@ module.exports = {
 
         bcrypt.compare(password, result.password, (error, same) => {
           if (error) {
+            logger.error(error);
+
             return res.json({
               success: false,
               message: INVALID_CREDENTIALS,
@@ -93,6 +102,8 @@ module.exports = {
         });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -115,6 +126,8 @@ module.exports = {
 
         result.save((error, updatedResult) => {
           if (error) {
+            logger.error(error);
+
             return res.json({
               success: false,
               message: AN_ERROR_OCCURRED,
@@ -129,6 +142,8 @@ module.exports = {
         });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -151,6 +166,8 @@ module.exports = {
         });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,

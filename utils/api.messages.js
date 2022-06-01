@@ -26,4 +26,6 @@ module.exports = {
   USERNAME_REQUIRED: "Username is required",
   PASSWORD_REQUIRED: `Password must be of at least ${min_pwd_size} characters, and contain at least one uppercase, lowercase and a number`,
   APARTMENT_IS_OCCUPIED: "Apartment is occupied",
+  DATABASE_CONNECTED: "Database connected successfully",
+  DATABASE_NOT_CONNECTED: "Database not connected successfully",
 };

@@ -7,6 +7,7 @@ const {
   DELETED_SUCCESSFULLY,
 } = require("../utils/api.messages");
 const { generateToken } = require("../utils/functions");
+const logger = require("../config/logger");
 
 module.exports = {
   find: (_req, res) => {
@@ -14,11 +15,14 @@ module.exports = {
       .select("-__v")
       .limit(10)
       .exec((error, cashes) => {
-        if (error || !cashes)
+        if (error) {
+          logger.error(error);
+
           return res.json({
             success: false,
             message: AN_ERROR_OCCURRED,
           });
+        }
 
         return res.json(cashes);
       });
@@ -38,6 +42,8 @@ module.exports = {
       .limit(10)
       .then((results) => res.json(results))
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -80,6 +86,8 @@ module.exports = {
             });
           })
           .catch((error) => {
+            logger.error(error);
+
             return res.json({
               success: false,
               message: error.message,
@@ -87,6 +95,8 @@ module.exports = {
           });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -97,7 +107,9 @@ module.exports = {
     const id = req.params.id;
 
     Cash.findByIdAndRemove(id, (error, deletedCash) => {
-      if (error || !deletedCash) {
+      if (error) {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: INVALID_CREDENTIALS,

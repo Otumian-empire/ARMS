@@ -1,3 +1,5 @@
+const logger = require("../config/logger");
+
 module.exports = (schema, property = "body") => {
   return (req, res, next) => {
     const options = {
@@ -12,6 +14,7 @@ module.exports = (schema, property = "body") => {
     if (valid) {
       return next();
     } else {
+      logger.error(error);
       const messages = error.details.map((err) => err.message).join(",");
 
       return res.status(200).json({

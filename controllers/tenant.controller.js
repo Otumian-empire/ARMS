@@ -12,6 +12,7 @@ const {
   KIN_IS_REQUIRED,
   LOGIN_SUCCESSFUL,
 } = require("../utils/api.messages");
+const logger = require("../config/logger");
 
 module.exports = {
   find: (_req, res) => {
@@ -26,6 +27,8 @@ module.exports = {
         return res.json(tenants);
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -44,6 +47,8 @@ module.exports = {
         return res.json(tenant);
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -70,7 +75,9 @@ module.exports = {
     }
 
     bcrypt.hash(password, rounds, (error, hashedPassword) => {
-      if (error || !hashedPassword) {
+      if (error) {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -90,6 +97,8 @@ module.exports = {
 
       tenant.save((error, result) => {
         if (error) {
+          logger.error(error);
+
           return res.json({
             success: false,
             message: AN_ERROR_OCCURRED,
@@ -111,6 +120,8 @@ module.exports = {
       .then((result) => {
         bcrypt.compare(password, result.password, (error, same) => {
           if (error || !same) {
+            // logger.error(error);
+
             return res.json({
               success: false,
               message: INVALID_CREDENTIALS,
@@ -125,6 +136,8 @@ module.exports = {
         });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: AN_ERROR_OCCURRED,
@@ -160,7 +173,9 @@ module.exports = {
         }
 
         tenant.save((error, updatedTenant) => {
-          if (error || !updatedTenant) {
+          if (error) {
+            logger.error(error);
+
             return res.json({
               success: false,
               message: AN_ERROR_OCCURRED,
@@ -175,6 +190,8 @@ module.exports = {
         });
       })
       .catch((error) => {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: error.message,
@@ -185,7 +202,9 @@ module.exports = {
     const id = req.params.id;
 
     Tenant.findByIdAndRemove(id, (error, deletedTenant) => {
-      if (error || !deletedTenant) {
+      if (error) {
+        logger.error(error);
+
         return res.json({
           success: false,
           message: INVALID_CREDENTIALS,

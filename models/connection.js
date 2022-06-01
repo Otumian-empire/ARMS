@@ -1,6 +1,12 @@
-require('dotenv').config()
+require("dotenv").config();
 
 const mongoose = require("mongoose");
+
+const logger = require("../config/logger");
+const {
+  DATABASE_CONNECTED,
+  DATABASE_NOT_CONNECTED,
+} = require("../utils/api.messages");
 
 // connect to a database, name of database after localhost/
 mongoose.connect(process.env.MONGODB_URI, {
@@ -9,14 +15,13 @@ mongoose.connect(process.env.MONGODB_URI, {
   // useCreateIndex: true,
 });
 
-// very connection
 mongoose.connection
   .once("open", function () {
-    console.log("Database connected successfully");
+    logger.info(DATABASE_CONNECTED);
   })
-  .on("error ", function (err) {
-    console.log("Database not connected successfully");
-    console.log(err);
+  .on("error ", function (error) {
+    logger.info(DATABASE_NOT_CONNECTED);
+    logger.error(error);
   });
 
 module.exports = mongoose;

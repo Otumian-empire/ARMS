@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const logger = require("morgan");
+
+const httpLogger = require("./config/http.logger");
+const logger = require("./config/logger");
 
 const { adminRouter } = require("./routes/admin");
 const { apartmentRouter } = require("./routes/apartments");
@@ -15,7 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Http logger
-app.use(logger("dev"));
+app.use(httpLogger);
 
 // Cors
 app.use(cors());
@@ -27,6 +29,6 @@ app.use("/tenant", tenantRouter);
 app.use("/cash", cashRouter);
 app.use("/rent", rentRouter);
 
-app.listen(port, console.log(`server started on port ${port}`));
+app.listen(port, logger.info(`server started on port ${port}`));
 
 module.exports = { app };
