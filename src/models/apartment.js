@@ -1,4 +1,4 @@
-const mongoose = require("./connection");
+import mongoose from "./connection.js";
 
 const ApartmentSchemaStructure = {
   roomNumber: {
@@ -21,4 +21,4 @@ const ApartmentSchema = new mongoose.Schema(ApartmentSchemaStructure);
 // model
 const Apartment = mongoose.model("apartment", ApartmentSchema);
 
-module.exports = { Apartment };
+export { Apartment };

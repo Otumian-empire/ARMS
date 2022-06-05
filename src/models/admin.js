@@ -1,4 +1,4 @@
-const mongoose = require("./connection");
+import mongoose from "./connection.js";
 
 const AdminSchemaStructure = {
   username: {
@@ -23,4 +23,4 @@ const AdminSchema = new mongoose.Schema(AdminSchemaStructure);
 // model
 const Admin = mongoose.model("Admin", AdminSchema);
 
-module.exports = { Admin };
+export { Admin };

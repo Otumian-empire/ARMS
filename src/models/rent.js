@@ -1,4 +1,4 @@
-const mongoose = require("./connection");
+import mongoose from "./connection.js";
 
 const RentSchemaStructure = {
   // TODO: think about whether a use can rent multiple rooms
@@ -29,4 +29,4 @@ const RentSchema = new mongoose.Schema(RentSchemaStructure);
 // model
 const Rent = mongoose.model("rent", RentSchema);
 
-module.exports = { Rent };
+export { Rent };

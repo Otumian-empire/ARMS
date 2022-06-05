@@ -1,12 +1,12 @@
 {
   "name": "arms",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "description": "ARMS is a management system for renting apartments. There are the tenants and land-lord, who is the admin. The admin registers apartments on ARMS, a tenant who is interested in renting from this land-lord registers for an apartment. Each apartment has its own detail, describing the basic interior of the room - provided by the admin, the cost for a term - a term is three month.",
+  "main": "src/app.js",
   "scripts": {
-    "dev": "clear && nodemon --trace-warnings app.js",
-    "setup": "node setup.js;",
-    "start": "node app.js"
+    "build": "babel ./src --out-dir build",
+    "dev": "nodemon",
+    "start": "node src/app.js"
   },
   "keywords": [
     "renting",
@@ -16,7 +16,7 @@
     "tenant",
     "room"
   ],
-  "type": "commonjs",
+  "type": "module",
   "author": "Otumian-empire@github.com",
   "license": "ISC",
   "dependencies": {
@@ -31,5 +31,11 @@
     "morgan": "^1.10.0",
     "morgan-json": "^1.1.0",
     "winston": "^3.7.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "@types/dotenv": "^8.2.0"
   }
 }

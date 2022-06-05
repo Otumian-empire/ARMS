@@ -1,22 +1,22 @@
-const Joi = require("joi");
-const { joiPassword } = require("joi-password");
+import Joi from "joi";
+import { joiPassword } from "joi-password";
 
-const {
-  INVALID_CREDENTIALS,
-  ID_PARAMETER_REQUIRED,
-  ROOM_NUMBER_REQUIRED,
-  PRICE_REQUIRED,
+import {
   AMOUNT_REQUIRED,
-  USERNAME_REQUIRED,
+  DOB_REQUIRED,
   EMAIL_REQUIRED,
   FULL_NAME_REQUIRED,
-  DOB_REQUIRED,
+  ID_PARAMETER_REQUIRED,
+  INVALID_CREDENTIALS,
+  PASSWORD_REQUIRED,
   PHONE_REQUIRED,
   PREVIOUS_ADDRESS_REQUIRED,
-  PASSWORD_REQUIRED,
-} = require("../utils/api.messages");
+  PRICE_REQUIRED,
+  ROOM_NUMBER_REQUIRED,
+  USERNAME_REQUIRED,
+} from "../utils/api.messages.js";
 
-const { MINIMUM_PASSWORD_SIZE, ONE } = require("../utils/app.constant");
+import { MINIMUM_PASSWORD_SIZE, ONE } from "../utils/app.constant.js";
 
 const schemas = {
   idRequestParams: Joi.object().keys({
@@ -227,4 +227,4 @@ const schemas = {
   }),
 };
 
-module.exports = schemas;
+export default schemas;

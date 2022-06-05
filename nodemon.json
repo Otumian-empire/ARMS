@@ -1,0 +1,6 @@
+{
+    "ignore": [".gitignore","./node_modules", "./build"],
+    "watch": ["./src"],
+    "exec": "npm start",
+    "ext": "js"
+}

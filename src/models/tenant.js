@@ -1,4 +1,4 @@
-const mongoose = require("./connection");
+import mongoose from "./connection.js";
 
 const TenantSchemaStructure = {
   fullName: {
@@ -58,4 +58,4 @@ const TenantSchema = new mongoose.Schema(TenantSchemaStructure);
 // model
 const Tenant = mongoose.model("tenant", TenantSchema);
 
-module.exports = { Tenant };
+export { Tenant };

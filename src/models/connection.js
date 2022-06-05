@@ -1,15 +1,14 @@
-require("dotenv").config();
+import mongoose from "mongoose";
 
-const mongoose = require("mongoose");
-
-const logger = require("../config/logger");
-const {
+import logger from "../config/logger.js";
+import {
   DATABASE_CONNECTED,
   DATABASE_NOT_CONNECTED,
-} = require("../utils/api.messages");
+} from "../utils/api.messages.js";
+import { MONGODB_URI } from "../utils/app.constant.js";
 
 // connect to a database, name of database after localhost/
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   // useCreateIndex: true,
@@ -24,4 +23,4 @@ mongoose.connection
     logger.error(error);
   });
 
-module.exports = mongoose;
+export default mongoose;

@@ -1,4 +1,4 @@
-const mongoose = require("./connection");
+import mongoose from "./connection.js";
 
 const CashSchemaStructure = {
   tenantId: {
@@ -26,4 +26,4 @@ const CashSchema = new mongoose.Schema(CashSchemaStructure);
 // model
 const Cash = mongoose.model("cash", CashSchema);
 
-module.exports = { Cash };
+export { Cash };

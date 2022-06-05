@@ -1,7 +1,7 @@
-const morgan = require("morgan");
-const morganJson = require("morgan-json");
+import morgan from "morgan";
+import morganJson from "morgan-json";
 
-const winstonLogger = require("./logger");
+import winstonLogger from "./logger.js";
 
 const format = morganJson({
   method: ":method",
@@ -27,4 +27,4 @@ const stream = {
   },
 };
 
-module.exports = morgan(format, { stream });
+export default morgan(format, { stream });
