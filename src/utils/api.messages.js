@@ -27,3 +27,4 @@ export const PASSWORD_REQUIRED = `Password must be of at least ${min_pwd_size} c
 export const APARTMENT_IS_OCCUPIED = "Apartment is occupied";
 export const DATABASE_CONNECTED = "Database connected successfully";
 export const DATABASE_NOT_CONNECTED = "Database not connected successfully";
+export const INVALID_ROOM_NUMBER = "Invalid room number";

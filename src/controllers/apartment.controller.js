@@ -4,9 +4,11 @@ import {
   AN_ERROR_OCCURRED,
   APARTMENT_CREATED_SUCCESSFULLY,
   DELETED_SUCCESSFULLY,
+  INVALID_ROOM_NUMBER,
   NOT_FOUND,
   UPDATE_SUCCESSFUL,
 } from "../utils/api.messages.js";
+import { isValidRoomNumber } from "../utils/functions.js";
 
 export function find(_req, res) {
   Apartment.find()
@@ -48,6 +50,13 @@ export function findById(req, res) {
 export function create(req, res) {
   let { roomNumber, description, price } = req.body;
 
+  if (!isValidRoomNumber(roomNumber)) {
+    return res.json({
+      success: false,
+      message: INVALID_ROOM_NUMBER,
+    });
+  }
+
   const apartment = new Apartment({
     roomNumber,
     description,
@@ -75,6 +84,13 @@ export function create(req, res) {
 export function update(req, res) {
   const id = req.params.id;
   const { roomNumber, description, price } = req.body;
+
+  if (!isValidRoomNumber(roomNumber)) {
+    return res.json({
+      success: false,
+      message: INVALID_ROOM_NUMBER,
+    });
+  }
 
   Apartment.findById(id)
     .then((apartment) => {

@@ -11,3 +11,17 @@ export function generateToken() {
 
   return token;
 }
+
+export function isValidRoomNumber(roomNumber = "") {
+  // A room number will be five characters starting with
+  // 'R' followed by the floor number and the room number
+  if (!roomNumber) return false;
+
+  const roomNumberLength = roomNumber.length;
+
+  if (roomNumberLength !== 5) return false;
+
+  if (!roomNumber.startsWith("R")) return false;
+
+  return !isNaN(Number(roomNumber.substring(1, roomNumberLength)));
+}
