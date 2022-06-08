@@ -21,4 +21,4 @@ const ApartmentSchema = new mongoose.Schema(ApartmentSchemaStructure);
 // model
 const Apartment = mongoose.model("apartment", ApartmentSchema);
 
-export { Apartment };
+export default Apartment;

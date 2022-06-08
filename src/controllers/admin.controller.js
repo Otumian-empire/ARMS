@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 
-import { Admin } from "../models/admin.js";
+import { Admin } from "../models/index.js";
 import {
   ADMIN_CREATED_SUCCESSFULLY,
   AN_ERROR_OCCURRED,

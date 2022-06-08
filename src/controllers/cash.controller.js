@@ -1,6 +1,5 @@
 import logger from "../config/logger.js";
-import { Cash } from "../models/cash.js";
-import { Tenant } from "../models/tenant.js";
+import { Cash, Tenant } from "../models/index.js";
 import {
   AN_ERROR_OCCURRED,
   CASH_ADDED_SUCCESSFULLY,

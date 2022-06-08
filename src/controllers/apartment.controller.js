@@ -1,5 +1,5 @@
 import logger from "../config/logger.js";
-import { Apartment } from "../models/apartment.js";
+import { Apartment } from "../models/index.js";
 import {
   AN_ERROR_OCCURRED,
   APARTMENT_CREATED_SUCCESSFULLY,

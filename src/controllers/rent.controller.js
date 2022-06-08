@@ -7,10 +7,7 @@ import {
   RENT_ADDED_SUCCESSFULLY,
 } from "../utils/api.messages.js";
 
-import { Apartment } from "../models/apartment.js";
-import { Cash } from "../models/cash.js";
-import { Rent } from "../models/rent.js";
-import { Tenant } from "../models/tenant.js";
+import { Apartment, Cash, Rent, Tenant } from "../models/index.js";
 
 import logger from "../config/logger.js";
 

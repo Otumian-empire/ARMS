@@ -26,4 +26,4 @@ const CashSchema = new mongoose.Schema(CashSchemaStructure);
 // model
 const Cash = mongoose.model("cash", CashSchema);
 
-export { Cash };
+export default Cash;
