@@ -1,7 +1,7 @@
 import { compare, hash } from "bcrypt";
 
 import logger from "../config/logger.js";
-import { Tenant } from "../models/index.js";
+import { Tenant } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   DELETED_SUCCESSFULLY,
@@ -11,8 +11,8 @@ import {
   NOT_FOUND,
   TENANT_CREATED_SUCCESSFULLY,
   UPDATE_SUCCESSFUL,
-} from "../utils/api.messages.js";
-import { rounds } from "../utils/app.constant.js";
+} from "../util/api.message.js";
+import { rounds } from "../util/app.constant.js";
 
 export function find(_req, res) {
   Tenant.find()

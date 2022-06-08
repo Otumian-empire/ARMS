@@ -27,6 +27,6 @@ const RentSchemaStructure = {
 const RentSchema = new mongoose.Schema(RentSchemaStructure);
 
 // model
-const Rent = mongoose.model("rent", RentSchema);
+const RentModel = mongoose.model("rent", RentSchema);
 
-export default Rent;
+export default RentModel;

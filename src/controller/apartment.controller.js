@@ -1,5 +1,5 @@
 import logger from "../config/logger.js";
-import { Apartment } from "../models/index.js";
+import { Apartment } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   APARTMENT_CREATED_SUCCESSFULLY,
@@ -8,8 +8,8 @@ import {
   INVALID_ROOM_NUMBER,
   NOT_FOUND,
   UPDATE_SUCCESSFUL,
-} from "../utils/api.messages.js";
-import { isValidPrice, isValidRoomNumber } from "../utils/functions.js";
+} from "../util/api.message.js";
+import { isValidPrice, isValidRoomNumber } from "../util/function.js";
 
 export function find(_req, res) {
   Apartment.find()

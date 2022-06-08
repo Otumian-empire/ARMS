@@ -6,27 +6,27 @@ import {
   findById,
   login,
   update,
-} from "../controllers/admin.controller.js";
-import joiMiddleware from "../utils/joi.middleware.js";
-import schema from "../utils/joi.schema.js";
+} from "../controller/admin.controller.js";
+import joiMiddleware from "../util/joi.middleware.js";
+import schema from "../util/joi.schema.js";
 
-const adminRouter = Router();
+const route = Router();
 
 // fetch an admin
-adminRouter.get(
+route.get(
   "/:id",
   joiMiddleware(schema.idRequestParams, "params"),
   findById
 );
 
 // create a admin - add admin data
-adminRouter.post("/", joiMiddleware(schema.adminSignupRequestBody), create);
+route.post("/", joiMiddleware(schema.adminSignupRequestBody), create);
 
 // login admin - they can change their data
-adminRouter.post("/login", joiMiddleware(schema.loginRequestBody), login);
+route.post("/login", joiMiddleware(schema.loginRequestBody), login);
 
 // update - admin may update only the email
-adminRouter.put(
+route.put(
   "/:id",
   [
     joiMiddleware(schema.idRequestParams, "params"),
@@ -36,10 +36,10 @@ adminRouter.put(
 );
 
 // delete admin data - admin privileges is needed
-adminRouter.delete(
+route.delete(
   "/:id",
   joiMiddleware(schema.idRequestParams, "params"),
   delete_
 );
 
-export { adminRouter };
+export default route;

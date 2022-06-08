@@ -5,24 +5,24 @@ import {
   findByTenantId,
   create,
   delete_,
-} from "../controllers/cash.controller.js";
-import joiMiddleware from "../utils/joi.middleware.js";
-import schemas from "../utils/joi.schema.js";
+} from "../controller/cash.controller.js";
+import joiMiddleware from "../util/joi.middleware.js";
+import schemas from "../util/joi.schema.js";
 
-const cashRouter = Router();
+const route = Router();
 
-cashRouter.get("/", find);
+route.get("/", find);
 
 // TODO: think about adding an endpoint for reading using the cash's ID
 // fetch an cash
-cashRouter.get(
+route.get(
   "/:id",
   joiMiddleware(schemas.idRequestParams, "params"),
   findByTenantId
 );
 
 // create a cash - add cash data
-cashRouter.post(
+route.post(
   "/:id",
   [
     joiMiddleware(schemas.idRequestParams, "params"),
@@ -32,10 +32,6 @@ cashRouter.post(
 );
 
 // delete cash data - cash privileges is needed
-cashRouter.delete(
-  "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
-  delete_
-);
+route.delete("/:id", joiMiddleware(schemas.idRequestParams, "params"), delete_);
 
-export { cashRouter };
+export default route;

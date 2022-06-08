@@ -1,12 +1,12 @@
 import logger from "../config/logger.js";
-import { Cash, Tenant } from "../models/index.js";
+import { Cash, Tenant } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   CASH_ADDED_SUCCESSFULLY,
   DELETED_SUCCESSFULLY,
   INVALID_CREDENTIALS,
-} from "../utils/api.messages.js";
-import { generateToken } from "../utils/functions.js";
+} from "../util/api.message.js";
+import { generateToken } from "../util/function.js";
 
 export function find(_req, res) {
   Cash.find()

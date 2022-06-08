@@ -5,24 +5,24 @@ import {
   delete_,
   find,
   findOneByRentId,
-} from "../controllers/rent.controller.js";
-import joiMiddleware from "../utils/joi.middleware.js";
-import schemas from "../utils/joi.schema.js";
+} from "../controller/rent.controller.js";
+import joiMiddleware from "../util/joi.middleware.js";
+import schemas from "../util/joi.schema.js";
 
-const rentRouter = Router();
+const route = Router();
 
 // fetch all Rents
-rentRouter.get("/", find);
+route.get("/", find);
 
 // fetch a Rent by Rent id
-rentRouter.get(
+route.get(
   "/:id",
   joiMiddleware(schemas.idRequestParams, "params"),
   findOneByRentId
 );
 
 // create a Rent - add Rent data
-rentRouter.post(
+route.post(
   "/:id",
   [
     joiMiddleware(schemas.idRequestParams, "params"),
@@ -32,10 +32,6 @@ rentRouter.post(
 );
 
 // delete Rent data - admin privileges is needed
-rentRouter.delete(
-  "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
-  delete_
-);
+route.delete("/:id", joiMiddleware(schemas.idRequestParams, "params"), delete_);
 
-export { rentRouter };
+export default route;

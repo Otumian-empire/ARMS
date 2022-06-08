@@ -1,18 +1,20 @@
 import cors from "cors";
 import express from "express";
 
-
 import httpLogger from "./config/http.logger.js";
 import logger from "./config/logger.js";
-import { port } from "./utils/app.constant.js";
+import { port } from "./util/app.constant.js";
 
-import { adminRouter } from "./routes/admin.js";
-import { apartmentRouter } from "./routes/apartments.js";
-import { cashRouter } from "./routes/cash.js";
-import { rentRouter } from "./routes/rent.js";
-import { tenantRouter } from "./routes/tenants.js";
+import {
+  adminRoute,
+  apartmentRoute,
+  cashRoute,
+  rentRoute,
+  tenantRoute,
+} from "./route/index.js";
 
 const app = express();
+
 // Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -24,12 +26,12 @@ app.use(httpLogger);
 app.use(cors());
 
 // Routes
-app.use("/admin", adminRouter);
-app.use("/apartment", apartmentRouter);
-app.use("/tenant", tenantRouter);
-app.use("/cash", cashRouter);
-app.use("/rent", rentRouter);
+app.use("/admin", adminRoute);
+app.use("/apartment", apartmentRoute);
+app.use("/tenant", tenantRoute);
+app.use("/cash", cashRoute);
+app.use("/rent", rentRoute);
 
 app.listen(port, logger.info(`server started on port ${port}`));
 
-export { app };
+export default app;

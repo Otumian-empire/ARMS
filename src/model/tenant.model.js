@@ -56,6 +56,6 @@ const TenantSchemaStructure = {
 const TenantSchema = new mongoose.Schema(TenantSchemaStructure);
 
 // model
-const Tenant = mongoose.model("tenant", TenantSchema);
+const TenantModel = mongoose.model("tenant", TenantSchema);
 
-export default Tenant;
+export default TenantModel;

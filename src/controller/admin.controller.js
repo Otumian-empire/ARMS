@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 
-import { Admin } from "../models/index.js";
+import { Admin } from "../model/index.js";
 import {
   ADMIN_CREATED_SUCCESSFULLY,
   AN_ERROR_OCCURRED,
@@ -9,10 +9,10 @@ import {
   LOGIN_SUCCESSFUL,
   NOT_FOUND,
   UPDATE_SUCCESSFUL,
-} from "../utils/api.messages.js";
+} from "../util/api.message.js";
 
 import logger from "../config/logger.js";
-import { rounds } from "../utils/app.constant.js";
+import { rounds } from "../util/app.constant.js";
 
 export function findById(req, res) {
   const id = req.params.id;

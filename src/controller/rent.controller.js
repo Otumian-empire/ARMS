@@ -5,9 +5,9 @@ import {
   INVALID_CREDENTIALS,
   NOT_FOUND,
   RENT_ADDED_SUCCESSFULLY,
-} from "../utils/api.messages.js";
+} from "../util/api.message.js";
 
-import { Apartment, Cash, Rent, Tenant } from "../models/index.js";
+import { Apartment, Cash, Rent, Tenant } from "../model/index.js";
 
 import logger from "../config/logger.js";
 

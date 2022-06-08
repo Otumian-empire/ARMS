@@ -14,9 +14,9 @@ import {
   PRICE_REQUIRED,
   ROOM_NUMBER_REQUIRED,
   USERNAME_REQUIRED,
-} from "../utils/api.messages.js";
+} from "../util/api.message.js";
 
-import { MINIMUM_PASSWORD_SIZE, ONE } from "../utils/app.constant.js";
+import { MINIMUM_PASSWORD_SIZE, ONE } from "../util/app.constant.js";
 
 const schemas = {
   idRequestParams: Joi.object().keys({
