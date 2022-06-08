@@ -4,11 +4,12 @@ import {
   AN_ERROR_OCCURRED,
   APARTMENT_CREATED_SUCCESSFULLY,
   DELETED_SUCCESSFULLY,
+  INVALID_PRICE,
   INVALID_ROOM_NUMBER,
   NOT_FOUND,
   UPDATE_SUCCESSFUL,
 } from "../utils/api.messages.js";
-import { isValidRoomNumber } from "../utils/functions.js";
+import { isValidPrice, isValidRoomNumber } from "../utils/functions.js";
 
 export function find(_req, res) {
   Apartment.find()
@@ -57,6 +58,13 @@ export function create(req, res) {
     });
   }
 
+  if (!isValidPrice(price)) {
+    return res.json({
+      success: false,
+      message: INVALID_PRICE,
+    });
+  }
+
   const apartment = new Apartment({
     roomNumber,
     description,
@@ -85,13 +93,6 @@ export function update(req, res) {
   const id = req.params.id;
   const { roomNumber, description, price } = req.body;
 
-  if (!isValidRoomNumber(roomNumber)) {
-    return res.json({
-      success: false,
-      message: INVALID_ROOM_NUMBER,
-    });
-  }
-
   Apartment.findById(id)
     .then((apartment) => {
       if (!apartment) {
@@ -99,6 +100,13 @@ export function update(req, res) {
       }
 
       if (roomNumber) {
+        if (!isValidRoomNumber(roomNumber)) {
+          return res.json({
+            success: false,
+            message: INVALID_ROOM_NUMBER,
+          });
+        }
+
         apartment.roomNumber = roomNumber;
       }
 
@@ -107,6 +115,13 @@ export function update(req, res) {
       }
 
       if (price) {
+        if (!isValidPrice(price)) {
+          return res.json({
+            success: false,
+            message: INVALID_PRICE,
+          });
+        }
+
         apartment.price = Number(price);
       }
 

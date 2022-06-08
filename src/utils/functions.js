@@ -25,3 +25,7 @@ export function isValidRoomNumber(roomNumber = "") {
 
   return !isNaN(Number(roomNumber.substring(1, roomNumberLength)));
 }
+
+export function isValidPrice(price = 0) {
+  return price && !isNaN(Number(price));
+}

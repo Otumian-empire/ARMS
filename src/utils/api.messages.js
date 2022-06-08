@@ -28,3 +28,4 @@ export const APARTMENT_IS_OCCUPIED = "Apartment is occupied";
 export const DATABASE_CONNECTED = "Database connected successfully";
 export const DATABASE_NOT_CONNECTED = "Database not connected successfully";
 export const INVALID_ROOM_NUMBER = "Invalid room number";
+export const INVALID_PRICE = "Invalid price, price must be numbers";

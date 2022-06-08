@@ -7,4 +7,3 @@
 - create an index file in the models folder that will export the models created
 - Extend the structure name with `.model.js`
 - setup prettier and eslint
-- Add a function to validate the price - price must be numerical without any other character
