@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
-
-import { Admin } from "../model/index.js";
+import logger from "../config/logger.js";
+import { adminModel } from "../model/index.js";
 import {
   ADMIN_CREATED_SUCCESSFULLY,
   AN_ERROR_OCCURRED,
@@ -8,54 +8,37 @@ import {
   INVALID_CREDENTIALS,
   LOGIN_SUCCESSFUL,
   NOT_FOUND,
-  UPDATE_SUCCESSFUL,
+  UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-
-import logger from "../config/logger.js";
 import { rounds } from "../util/app.constant.js";
 
-export function findById(req, res) {
-  const id = req.params.id;
+export default class AdminController {
+  static findById(req, res) {
+    const id = req.params.id;
 
-  Admin.findById(id)
-    .select("-password -__v")
-    .then((admin) => {
-      if (!admin) {
-        throw new Error(NOT_FOUND);
-      }
+    adminModel.findById(id)
+      .select("-password -__v")
+      .then((admin) => {
+        if (!admin) {
+          throw new Error(NOT_FOUND);
+        }
 
-      return res.json(admin);
-    })
-    .catch((error) => {
-      logger.error(error);
+        return res.json(admin);
+      })
+      .catch((error) => {
+        logger.error(error);
 
-      return res.json({
-        success: false,
-        message: error.message,
+        return res.json({
+          success: false,
+          message: error.message,
+        });
       });
-    });
-}
+  }
 
-export function create(req, res) {
-  let { username, password, email } = req.body;
+  static create(req, res) {
+    let { username, password, email } = req.body;
 
-  hash(password, rounds, (error, hashPassword) => {
-    if (error) {
-      logger.error(error);
-
-      return res.json({
-        success: false,
-        message: AN_ERROR_OCCURRED,
-      });
-    }
-
-    let admin = new Admin({
-      username,
-      email,
-      password: hashPassword,
-    });
-
-    admin.save((error, result) => {
+    hash(password, rounds, (error, hashPassword) => {
       if (error) {
         logger.error(error);
 
@@ -65,66 +48,13 @@ export function create(req, res) {
         });
       }
 
-      return res.json({
-        success: true,
-        message: ADMIN_CREATED_SUCCESSFULLY,
-        id: result.id,
+      let admin = new adminModel({
+        username,
+        email,
+        password: hashPassword,
       });
-    });
-  });
-}
 
-export function login(req, res) {
-  const { username, password } = req.body;
-
-  Admin.findOne({ username })
-    .then((result) => {
-      if (!result) {
-        throw new Error(NOT_FOUND);
-      }
-
-      compare(password, result.password, (error, same) => {
-        if (error) {
-          logger.error(error);
-
-          return res.json({
-            success: false,
-            message: INVALID_CREDENTIALS,
-          });
-        }
-
-        return res.json({
-          success: true,
-          message: LOGIN_SUCCESSFUL,
-          id: result.id,
-        });
-      });
-    })
-    .catch((error) => {
-      logger.error(error);
-
-      return res.json({
-        success: false,
-        message: error.message,
-      });
-    });
-}
-
-export function update(req, res) {
-  const id = req.params.id;
-  const email = req.body.email;
-
-  Admin.findById(id)
-    .then((result) => {
-      if (!result) {
-        throw new Error(NOT_FOUND);
-      }
-
-      if (email) {
-        result.email = email;
-      }
-
-      result.save((error, updatedResult) => {
+      admin.save((error, result) => {
         if (error) {
           logger.error(error);
 
@@ -136,42 +66,112 @@ export function update(req, res) {
 
         return res.json({
           success: true,
-          message: UPDATE_SUCCESSFUL,
-          id: updatedResult.id,
+          message: ADMIN_CREATED_SUCCESSFULLY,
+          id: result.id,
         });
       });
-    })
-    .catch((error) => {
-      logger.error(error);
-
-      return res.json({
-        success: false,
-        message: error.message,
-      });
     });
-}
+  }
 
-export function delete_(req, res) {
-  const id = req.params.id;
+  static login(req, res) {
+    const { username, password } = req.body;
 
-  Admin.findByIdAndDelete(id)
-    .then((result) => {
-      if (!result) {
-        throw new Error(NOT_FOUND);
-      }
+    adminModel.findOne({ username })
+      .then((result) => {
+        if (!result) {
+          throw new Error(NOT_FOUND);
+        }
 
-      return res.json({
-        success: true,
-        message: DELETED_SUCCESSFULLY,
-        id: result.id,
+        compare(password, result.password, (error, same) => {
+          if (error) {
+            logger.error(error);
+
+            return res.json({
+              success: false,
+              message: INVALID_CREDENTIALS,
+            });
+          }
+
+          return res.json({
+            success: true,
+            message: LOGIN_SUCCESSFUL,
+            id: result.id,
+          });
+        });
+      })
+      .catch((error) => {
+        logger.error(error);
+
+        return res.json({
+          success: false,
+          message: error.message,
+        });
       });
-    })
-    .catch((error) => {
-      logger.error(error);
+  }
 
-      return res.json({
-        success: false,
-        message: error.message,
+  static update(req, res) {
+    const id = req.params.id;
+    const email = req.body.email;
+
+    adminModel.findById(id)
+      .then((result) => {
+        if (!result) {
+          throw new Error(NOT_FOUND);
+        }
+
+        if (email) {
+          result.email = email;
+        }
+
+        result.save((error, updatedResult) => {
+          if (error) {
+            logger.error(error);
+
+            return res.json({
+              success: false,
+              message: AN_ERROR_OCCURRED,
+            });
+          }
+
+          return res.json({
+            success: true,
+            message: UPDATE_SUCCESSFUL,
+            id: updatedResult.id,
+          });
+        });
+      })
+      .catch((error) => {
+        logger.error(error);
+
+        return res.json({
+          success: false,
+          message: error.message,
+        });
       });
-    });
+  }
+
+  static delete_(req, res) {
+    const id = req.params.id;
+
+    adminModel.findByIdAndDelete(id)
+      .then((result) => {
+        if (!result) {
+          throw new Error(NOT_FOUND);
+        }
+
+        return res.json({
+          success: true,
+          message: DELETED_SUCCESSFULLY,
+          id: result.id,
+        });
+      })
+      .catch((error) => {
+        logger.error(error);
+
+        return res.json({
+          success: false,
+          message: error.message,
+        });
+      });
+  }
 }

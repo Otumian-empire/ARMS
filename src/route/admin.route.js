@@ -1,12 +1,5 @@
 import { Router } from "express";
-
-import {
-  create,
-  delete_,
-  findById,
-  login,
-  update,
-} from "../controller/admin.controller.js";
+import { adminController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schema from "../util/joi.schema.js";
 
@@ -16,14 +9,22 @@ const route = Router();
 route.get(
   "/:id",
   joiMiddleware(schema.idRequestParams, "params"),
-  findById
+  adminController.findById
 );
 
 // create a admin - add admin data
-route.post("/", joiMiddleware(schema.adminSignupRequestBody), create);
+route.post(
+  "/",
+  joiMiddleware(schema.adminSignupRequestBody),
+  adminController.create
+);
 
 // login admin - they can change their data
-route.post("/login", joiMiddleware(schema.loginRequestBody), login);
+route.post(
+  "/login",
+  joiMiddleware(schema.loginRequestBody),
+  adminController.login
+);
 
 // update - admin may update only the email
 route.put(
@@ -32,14 +33,14 @@ route.put(
     joiMiddleware(schema.idRequestParams, "params"),
     joiMiddleware(schema.adminUpdateRequestBody),
   ],
-  update
+  adminController.update
 );
 
 // delete admin data - admin privileges is needed
 route.delete(
   "/:id",
   joiMiddleware(schema.idRequestParams, "params"),
-  delete_
+  adminController.delete_
 );
 
 export default route;

@@ -1,24 +1,18 @@
 import { Router } from "express";
-
-import {
-  create,
-  delete_,
-  find,
-  findOneByRentId,
-} from "../controller/rent.controller.js";
+import { rentController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
 
 const route = Router();
 
 // fetch all Rents
-route.get("/", find);
+route.get("/", rentController.find);
 
 // fetch a Rent by Rent id
 route.get(
   "/:id",
   joiMiddleware(schemas.idRequestParams, "params"),
-  findOneByRentId
+  rentController.findOneByRentId
 );
 
 // create a Rent - add Rent data
@@ -28,10 +22,14 @@ route.post(
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.rentCreateRequestBody),
   ],
-  create
+  rentController.create
 );
 
 // delete Rent data - admin privileges is needed
-route.delete("/:id", joiMiddleware(schemas.idRequestParams, "params"), delete_);
+route.delete(
+  "/:id",
+  joiMiddleware(schemas.idRequestParams, "params"),
+  rentController.delete_
+);
 
 export default route;

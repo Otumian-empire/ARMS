@@ -1,24 +1,18 @@
 import { Router } from "express";
-
-import {
-  find,
-  findByTenantId,
-  create,
-  delete_,
-} from "../controller/cash.controller.js";
+import { cashController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
 
 const route = Router();
 
-route.get("/", find);
+route.get("/", cashController.find);
 
 // TODO: think about adding an endpoint for reading using the cash's ID
 // fetch an cash
 route.get(
   "/:id",
   joiMiddleware(schemas.idRequestParams, "params"),
-  findByTenantId
+  cashController.findByTenantId
 );
 
 // create a cash - add cash data
@@ -28,10 +22,14 @@ route.post(
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.cashCreateRequestBody),
   ],
-  create
+  cashController.create
 );
 
 // delete cash data - cash privileges is needed
-route.delete("/:id", joiMiddleware(schemas.idRequestParams, "params"), delete_);
+route.delete(
+  "/:id",
+  joiMiddleware(schemas.idRequestParams, "params"),
+  cashController.delete_
+);
 
 export default route;
