@@ -4,15 +4,15 @@ const ApartmentSchemaStructure = {
   roomNumber: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   description: {
-    type: String,
+    type: String
   },
   price: {
     type: Number,
-    required: true,
-  },
+    required: true
+  }
 };
 
 // mongoose schema

@@ -3,14 +3,14 @@ import mongoose from "mongoose";
 import logger from "../config/logger.js";
 import {
   DATABASE_CONNECTED,
-  DATABASE_NOT_CONNECTED,
+  DATABASE_NOT_CONNECTED
 } from "../util/api.message.js";
 import { MONGODB_URI } from "../util/app.constant.js";
 
 // connect to a database, name of database after localhost/
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
   // useCreateIndex: true,
 });
 

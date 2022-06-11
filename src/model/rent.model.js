@@ -5,22 +5,22 @@ const RentSchemaStructure = {
   tenantId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    unique: true,
+    unique: true
   },
   apartmentId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    unique: true,
+    unique: true
   },
   cashId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    unique: true,
+    unique: true
   },
   rentedAt: {
     type: Date,
-    default: Date.now(),
-  },
+    default: Date.now()
+  }
 };
 
 // mongoose schema

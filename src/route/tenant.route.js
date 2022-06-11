@@ -35,7 +35,7 @@ route.put(
   "/:id",
   [
     joiMiddleware(schemas.idRequestParams, "params"),
-    joiMiddleware(schemas.tenantUpdateRequestBody),
+    joiMiddleware(schemas.tenantUpdateRequestBody)
   ],
   tenantController.update
 );

@@ -31,7 +31,7 @@ route.put(
   "/:id",
   [
     joiMiddleware(schema.idRequestParams, "params"),
-    joiMiddleware(schema.adminUpdateRequestBody),
+    joiMiddleware(schema.adminUpdateRequestBody)
   ],
   adminController.update
 );

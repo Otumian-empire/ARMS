@@ -4,7 +4,7 @@ import {
   AN_ERROR_OCCURRED,
   CASH_ADDED_SUCCESSFULLY,
   DELETED_SUCCESSFULLY,
-  INVALID_CREDENTIALS,
+  INVALID_CREDENTIALS
 } from "../util/api.message.js";
 import { generateToken } from "../util/function.js";
 
@@ -20,7 +20,7 @@ export default class CashController {
 
         return res.json({
           success: false,
-          message: AN_ERROR_OCCURRED,
+          message: AN_ERROR_OCCURRED
         });
       });
   }
@@ -31,7 +31,7 @@ export default class CashController {
     if (!id) {
       return res.json({
         success: false,
-        message: INVALID_CREDENTIALS,
+        message: INVALID_CREDENTIALS
       });
     }
 
@@ -45,7 +45,7 @@ export default class CashController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -57,7 +57,7 @@ export default class CashController {
     if (!id || !amount) {
       return res.json({
         success: false,
-        message: AN_ERROR_OCCURRED,
+        message: AN_ERROR_OCCURRED
       });
     }
 
@@ -74,7 +74,7 @@ export default class CashController {
           .create({
             tenantId: id,
             token,
-            amount,
+            amount
           })
           .then((result) => {
             if (!result) {
@@ -84,7 +84,7 @@ export default class CashController {
             return res.json({
               success: true,
               message: CASH_ADDED_SUCCESSFULLY,
-              id: result.id,
+              id: result.id
             });
           })
           .catch((error) => {
@@ -92,7 +92,7 @@ export default class CashController {
 
             return res.json({
               success: false,
-              message: error.message,
+              message: error.message
             });
           });
       })
@@ -101,7 +101,7 @@ export default class CashController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -115,14 +115,14 @@ export default class CashController {
 
         return res.json({
           success: false,
-          message: INVALID_CREDENTIALS,
+          message: INVALID_CREDENTIALS
         });
       }
 
       return res.json({
         success: true,
         message: DELETED_SUCCESSFULLY,
-        id: deletedCash.id,
+        id: deletedCash.id
       });
     });
   }

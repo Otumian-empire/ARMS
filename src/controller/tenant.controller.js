@@ -9,13 +9,14 @@ import {
   LOGIN_SUCCESSFUL,
   NOT_FOUND,
   TENANT_CREATED_SUCCESSFULLY,
-  UPDATE_SUCCESSFUL,
+  UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { rounds } from "../util/app.constant.js";
 
 export default class TenantController {
   static find(_req, res) {
-    tenantModel.find()
+    tenantModel
+      .find()
       .limit(10)
       .then((tenants) => {
         if (!tenants) {
@@ -29,7 +30,7 @@ export default class TenantController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -37,7 +38,8 @@ export default class TenantController {
   static findById(req, res) {
     const id = req.params.id;
 
-    tenantModel.findById(id)
+    tenantModel
+      .findById(id)
       .then((tenant) => {
         if (!tenant) {
           throw new Error(NOT_FOUND);
@@ -50,7 +52,7 @@ export default class TenantController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -64,13 +66,13 @@ export default class TenantController {
       phone,
       dob,
       prevResidenceAddress,
-      kin,
+      kin
     } = req.body;
 
     if (!kin.fullName || !kin.email || !kin.phone || !kin.residenceAddress) {
       return res.json({
         success: false,
-        message: KIN_IS_REQUIRED,
+        message: KIN_IS_REQUIRED
       });
     }
 
@@ -80,7 +82,7 @@ export default class TenantController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       }
 
@@ -92,7 +94,7 @@ export default class TenantController {
         phone,
         dob,
         prevResidenceAddress,
-        kin,
+        kin
       });
 
       tenant.save((error, result) => {
@@ -101,14 +103,14 @@ export default class TenantController {
 
           return res.json({
             success: false,
-            message: AN_ERROR_OCCURRED,
+            message: AN_ERROR_OCCURRED
           });
         }
 
         return res.json({
           success: true,
           message: TENANT_CREATED_SUCCESSFULLY,
-          id: result.id,
+          id: result.id
         });
       });
     });
@@ -117,21 +119,22 @@ export default class TenantController {
   static login(req, res) {
     const { username, password } = req.body;
 
-    tenantModel.findOne({ username })
+    tenantModel
+      .findOne({ username })
       .then((result) => {
         compare(password, result.password, (error, same) => {
           if (error || !same) {
             // logger.error(error);
             return res.json({
               success: false,
-              message: INVALID_CREDENTIALS,
+              message: INVALID_CREDENTIALS
             });
           }
 
           return res.json({
             success: true,
             message: LOGIN_SUCCESSFUL,
-            id: result.id,
+            id: result.id
           });
         });
       })
@@ -140,7 +143,7 @@ export default class TenantController {
 
         return res.json({
           success: false,
-          message: AN_ERROR_OCCURRED,
+          message: AN_ERROR_OCCURRED
         });
       });
   }
@@ -149,7 +152,8 @@ export default class TenantController {
     const { email, phone, kin } = req.body;
     const id = req.params.id;
 
-    tenantModel.findById(id)
+    tenantModel
+      .findById(id)
       .then((tenant) => {
         if (!tenant) {
           throw new Error(INVALID_CREDENTIALS);
@@ -179,14 +183,14 @@ export default class TenantController {
 
             return res.json({
               success: false,
-              message: AN_ERROR_OCCURRED,
+              message: AN_ERROR_OCCURRED
             });
           }
 
           return res.json({
             success: true,
             message: UPDATE_SUCCESSFUL,
-            id: updatedTenant.id,
+            id: updatedTenant.id
           });
         });
       })
@@ -195,7 +199,7 @@ export default class TenantController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -209,14 +213,14 @@ export default class TenantController {
 
         return res.json({
           success: false,
-          message: INVALID_CREDENTIALS,
+          message: INVALID_CREDENTIALS
         });
       }
 
       return res.json({
         success: true,
         message: DELETED_SUCCESSFULLY,
-        id: deletedTenant.id,
+        id: deletedTenant.id
       });
     });
   }

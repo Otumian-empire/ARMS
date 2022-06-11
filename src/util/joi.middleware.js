@@ -3,7 +3,7 @@ export default (schema, property = "body") => {
     const options = {
       abortEarly: true, // include all errors
       allowUnknown: true, // ignore unknown props
-      convert: true,
+      convert: true
     };
 
     const { error } = schema.validate(req[property], options);
@@ -16,7 +16,7 @@ export default (schema, property = "body") => {
 
       return res.status(200).json({
         success: false,
-        message: messages,
+        message: messages
       });
     }
   };

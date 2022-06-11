@@ -3,7 +3,7 @@ import {
   apartmentModel,
   cashModel,
   rentModel,
-  tenantModel,
+  tenantModel
 } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
@@ -11,7 +11,7 @@ import {
   DELETED_SUCCESSFULLY,
   INVALID_CREDENTIALS,
   NOT_FOUND,
-  RENT_ADDED_SUCCESSFULLY,
+  RENT_ADDED_SUCCESSFULLY
 } from "../util/api.message.js";
 
 export default class RentController {
@@ -26,7 +26,7 @@ export default class RentController {
 
         return res.json({
           success: false,
-          message: AN_ERROR_OCCURRED,
+          message: AN_ERROR_OCCURRED
         });
       });
   }
@@ -49,7 +49,7 @@ export default class RentController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -61,7 +61,7 @@ export default class RentController {
     if (!id || !apartmentId || !cashId) {
       return res.json({
         success: false,
-        message: INVALID_CREDENTIALS,
+        message: INVALID_CREDENTIALS
       });
     }
 
@@ -100,14 +100,14 @@ export default class RentController {
                       .create({
                         tenantId: id,
                         apartmentId,
-                        cashId,
+                        cashId
                       })
                       .then((rent) => {
                         if (rent)
                           return res.json({
                             success: true,
                             message: RENT_ADDED_SUCCESSFULLY,
-                            id: rent.id,
+                            id: rent.id
                           });
                       })
                       .catch((error) => {
@@ -115,7 +115,7 @@ export default class RentController {
 
                         return res.json({
                           success: false,
-                          message: error.message,
+                          message: error.message
                         });
                       });
                   })
@@ -124,7 +124,7 @@ export default class RentController {
 
                     return res.json({
                       success: false,
-                      message: error.message,
+                      message: error.message
                     });
                   });
               })
@@ -133,7 +133,7 @@ export default class RentController {
 
                 return res.json({
                   success: false,
-                  message: error.message,
+                  message: error.message
                 });
               });
           })
@@ -142,7 +142,7 @@ export default class RentController {
 
             return res.json({
               success: false,
-              message: error.message,
+              message: error.message
             });
           });
       })
@@ -151,7 +151,7 @@ export default class RentController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -169,7 +169,7 @@ export default class RentController {
         return res.json({
           success: true,
           message: DELETED_SUCCESSFULLY,
-          id: result.id,
+          id: result.id
         });
       })
       .catch((error) => {
@@ -178,7 +178,7 @@ export default class RentController {
         if (error) {
           return res.json({
             success: false,
-            message: error.message,
+            message: error.message
           });
         }
       });

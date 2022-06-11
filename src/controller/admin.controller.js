@@ -8,7 +8,7 @@ import {
   INVALID_CREDENTIALS,
   LOGIN_SUCCESSFUL,
   NOT_FOUND,
-  UPDATE_SUCCESSFUL,
+  UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { rounds } from "../util/app.constant.js";
 
@@ -29,7 +29,7 @@ export default class AdminController {
 
       return res.json({
         success: false,
-        message: error.message,
+        message: error.message
       });
     }
   }
@@ -43,7 +43,7 @@ export default class AdminController {
       let admin = new adminModel({
         username,
         email,
-        password: hashedPassword,
+        password: hashedPassword
       });
 
       const result = await admin.save();
@@ -51,14 +51,14 @@ export default class AdminController {
       return res.json({
         success: true,
         message: ADMIN_CREATED_SUCCESSFULLY,
-        id: result.id,
+        id: result.id
       });
     } catch (error) {
       logger.error(error);
 
       return res.json({
         success: false,
-        message: AN_ERROR_OCCURRED,
+        message: AN_ERROR_OCCURRED
       });
     }
   }
@@ -76,20 +76,20 @@ export default class AdminController {
       const same = await compare(password, result.password);
 
       if (!same) {
-        throw new Error(INVALID_CREDENTIALS)
+        throw new Error(INVALID_CREDENTIALS);
       }
 
       return res.json({
         success: true,
         message: LOGIN_SUCCESSFUL,
-        id: result.id,
+        id: result.id
       });
     } catch (error) {
       logger.error(error);
 
       return res.json({
         success: false,
-        message: error.message,
+        message: error.message
       });
     }
   }
@@ -117,14 +117,14 @@ export default class AdminController {
       return res.json({
         success: true,
         message: UPDATE_SUCCESSFUL,
-        id: updatedResult.id,
+        id: updatedResult.id
       });
     } catch (error) {
       logger.error(error);
 
       return res.json({
         success: false,
-        message: error.message,
+        message: error.message
       });
     }
   }
@@ -142,14 +142,14 @@ export default class AdminController {
       return res.json({
         success: true,
         message: DELETED_SUCCESSFULLY,
-        id: result.id,
+        id: result.id
       });
     } catch (error) {
       logger.error(error);
 
       return res.json({
         success: false,
-        message: error.message,
+        message: error.message
       });
     }
   }

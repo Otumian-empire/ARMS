@@ -27,7 +27,7 @@ route.put(
   "/:id",
   [
     joiMiddleware(schemas.idRequestParams, "params"),
-    joiMiddleware(schemas.apartmentUpdateRequestBody),
+    joiMiddleware(schemas.apartmentUpdateRequestBody)
   ],
   apartmentController.update
 );

@@ -3,53 +3,53 @@ import mongoose from "./connection.js";
 const TenantSchemaStructure = {
   fullName: {
     type: String,
-    required: true,
+    required: true
   },
   username: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   password: {
     type: String,
-    required: true,
+    required: true
   },
   email: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   phone: {
     type: String,
-    required: true,
+    required: true
   },
   // date of birth
   dob: {
     type: String,
-    required: true,
+    required: true
   },
   prevResidenceAddress: {
     type: String,
-    required: true,
+    required: true
   },
   kin: {
     fullName: {
       type: String,
-      required: true,
+      required: true
     },
     email: {
       type: String,
-      required: true,
+      required: true
     },
     phone: {
       type: String,
-      required: true,
+      required: true
     },
     residenceAddress: {
       type: String,
-      required: true,
-    },
-  },
+      required: true
+    }
+  }
 };
 
 // mongoose schema

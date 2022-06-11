@@ -20,7 +20,7 @@ route.post(
   "/:id",
   [
     joiMiddleware(schemas.idRequestParams, "params"),
-    joiMiddleware(schemas.rentCreateRequestBody),
+    joiMiddleware(schemas.rentCreateRequestBody)
   ],
   rentController.create
 );

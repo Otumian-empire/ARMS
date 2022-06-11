@@ -3,21 +3,21 @@ import mongoose from "./connection.js";
 const CashSchemaStructure = {
   tenantId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    required: true
   },
   token: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   amount: {
     type: Number,
-    required: true,
+    required: true
   },
   paidAt: {
     type: Date,
-    default: Date.now(),
-  },
+    default: Date.now()
+  }
 };
 
 // mongoose schema

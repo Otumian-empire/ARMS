@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config()
+dotenv.config();
 
 export const rounds = parseInt(process.env.SALT_ROUNDS) || 10;
 export const JWT_SECRET = process.env.JWT_SECRET;

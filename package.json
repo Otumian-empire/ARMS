@@ -6,7 +6,10 @@
   "scripts": {
     "build": "babel ./src --out-dir build",
     "dev": "nodemon",
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "format": "npx prettier --write ./src",
+    "check": "npx prettier --check ./src",
+    "lint": "npx eslint ./src"
   },
   "keywords": [
     "renting",
@@ -36,6 +39,8 @@
     "@babel/cli": "^7.17.10",
     "@babel/core": "^7.18.2",
     "@babel/preset-env": "^7.18.2",
-    "@types/dotenv": "^8.2.0"
+    "@types/dotenv": "^8.2.0",
+    "eslint": "^8.17.0",
+    "prettier": "2.6.2"
   }
 }

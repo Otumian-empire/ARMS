@@ -8,7 +8,7 @@ const format = morganJson({
   url: ":url",
   status: ":status",
   contentLength: ":res[content-length]",
-  responseTime: ":response-time",
+  responseTime: ":response-time"
 });
 
 const stream = {
@@ -22,9 +22,9 @@ const stream = {
       url,
       status: Number(status),
       contentLength,
-      responseTime: Number(responseTime),
+      responseTime: Number(responseTime)
     });
-  },
+  }
 };
 
 export default morgan(format, { stream });

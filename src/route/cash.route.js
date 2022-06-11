@@ -20,7 +20,7 @@ route.post(
   "/:id",
   [
     joiMiddleware(schemas.idRequestParams, "params"),
-    joiMiddleware(schemas.cashCreateRequestBody),
+    joiMiddleware(schemas.cashCreateRequestBody)
   ],
   cashController.create
 );

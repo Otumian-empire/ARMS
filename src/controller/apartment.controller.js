@@ -7,13 +7,14 @@ import {
   INVALID_PRICE,
   INVALID_ROOM_NUMBER,
   NOT_FOUND,
-  UPDATE_SUCCESSFUL,
+  UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { isValidPrice, isValidRoomNumber } from "../util/function.js";
 
 export default class ApartmentController {
   static find(_req, res) {
-    apartmentModel.find()
+    apartmentModel
+      .find()
       .limit(10)
       .select("-__v")
       .then((apartments) => res.json(apartments))
@@ -22,7 +23,7 @@ export default class ApartmentController {
 
         return res.json({
           success: false,
-          message: AN_ERROR_OCCURRED,
+          message: AN_ERROR_OCCURRED
         });
       });
   }
@@ -30,7 +31,8 @@ export default class ApartmentController {
   static findById(req, res) {
     const id = req.params.id;
 
-    apartmentModel.findById(id)
+    apartmentModel
+      .findById(id)
       .select("-__v")
       .then((apartment) => {
         if (!apartment) {
@@ -44,7 +46,7 @@ export default class ApartmentController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -55,21 +57,21 @@ export default class ApartmentController {
     if (!isValidRoomNumber(roomNumber)) {
       return res.json({
         success: false,
-        message: INVALID_ROOM_NUMBER,
+        message: INVALID_ROOM_NUMBER
       });
     }
 
     if (!isValidPrice(price)) {
       return res.json({
         success: false,
-        message: INVALID_PRICE,
+        message: INVALID_PRICE
       });
     }
 
     const apartment = new apartmentModel({
       roomNumber,
       description,
-      price: Number(price),
+      price: Number(price)
     });
 
     apartment.save((error, result) => {
@@ -78,14 +80,14 @@ export default class ApartmentController {
 
         return res.json({
           success: false,
-          message: AN_ERROR_OCCURRED,
+          message: AN_ERROR_OCCURRED
         });
       }
 
       return res.json({
         success: true,
         message: APARTMENT_CREATED_SUCCESSFULLY,
-        id: result.id,
+        id: result.id
       });
     });
   }
@@ -94,7 +96,8 @@ export default class ApartmentController {
     const id = req.params.id;
     const { roomNumber, description, price } = req.body;
 
-    apartmentModel.findById(id)
+    apartmentModel
+      .findById(id)
       .then((apartment) => {
         if (!apartment) {
           throw new Error(NOT_FOUND);
@@ -104,7 +107,7 @@ export default class ApartmentController {
           if (!isValidRoomNumber(roomNumber)) {
             return res.json({
               success: false,
-              message: INVALID_ROOM_NUMBER,
+              message: INVALID_ROOM_NUMBER
             });
           }
 
@@ -119,7 +122,7 @@ export default class ApartmentController {
           if (!isValidPrice(price)) {
             return res.json({
               success: false,
-              message: INVALID_PRICE,
+              message: INVALID_PRICE
             });
           }
 
@@ -132,14 +135,14 @@ export default class ApartmentController {
 
             return res.json({
               success: false,
-              message: AN_ERROR_OCCURRED,
+              message: AN_ERROR_OCCURRED
             });
           }
 
           return res.json({
             success: true,
             message: UPDATE_SUCCESSFUL,
-            id: updatedapartmentModel.id,
+            id: updatedapartmentModel.id
           });
         });
       })
@@ -148,7 +151,7 @@ export default class ApartmentController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }
@@ -156,7 +159,8 @@ export default class ApartmentController {
   static delete_(req, res) {
     const id = req.params.id;
 
-    apartmentModel.findByIdAndDelete(id)
+    apartmentModel
+      .findByIdAndDelete(id)
       .then((result) => {
         if (!result) {
           throw new Error(NOT_FOUND);
@@ -165,7 +169,7 @@ export default class ApartmentController {
         return res.json({
           success: true,
           message: DELETED_SUCCESSFULLY,
-          id: result.id,
+          id: result.id
         });
       })
       .catch((error) => {
@@ -173,7 +177,7 @@ export default class ApartmentController {
 
         return res.json({
           success: false,
-          message: error.message,
+          message: error.message
         });
       });
   }

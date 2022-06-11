@@ -10,7 +10,7 @@ import {
   apartmentRoute,
   cashRoute,
   rentRoute,
-  tenantRoute,
+  tenantRoute
 } from "./route/index.js";
 
 const app = express();
