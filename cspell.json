@@ -1,12 +1,9 @@
 {
-    "version": "0.2",
-    "ignorePaths": [],
-    "dictionaryDefinitions": [],
-    "dictionaries": [],
-    "words": [
-        "alphanum",
-        "Ashita"
-    ],
-    "ignoreWords": [],
-    "import": []
+  "version": "0.2",
+  "ignorePaths": [],
+  "dictionaryDefinitions": [],
+  "dictionaries": [],
+  "words": ["alphanum", "Ashita"],
+  "ignoreWords": [],
+  "import": []
 }
