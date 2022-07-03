@@ -1,12 +1,15 @@
+import Auth from "../config/auth.js";
 import logger from "../config/logger.js";
-import { cashModel, tenantModel } from "../model/index.js";
+import { adminModel, cashModel, tenantModel } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   CASH_ADDED_SUCCESSFULLY,
   DELETED_SUCCESSFULLY,
-  INVALID_CREDENTIALS
+  FORBIDDEN,
+  INVALID_CREDENTIALS,
+  REQUEST_TOKEN
 } from "../util/api.message.js";
-import { generateToken } from "../util/function.js";
+import { generateToken, isAuthenticUser } from "../util/function.js";
 
 export default class CashController {
   static async find(_req, res) {
@@ -53,6 +56,21 @@ export default class CashController {
 
   static async create(req, res) {
     try {
+      const jwt = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(jwt);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(tenantModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const id = req.params.id;
       const amount = Number(req.body.amount) || 0;
 
@@ -98,6 +116,21 @@ export default class CashController {
 
   static async delete_(req, res) {
     try {
+      const jwt = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(jwt);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(adminModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const id = req.params.id;
 
       const result = await cashModel.findByIdAndRemove(id);

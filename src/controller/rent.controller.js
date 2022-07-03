@@ -1,5 +1,7 @@
+import Auth from "../config/auth.js";
 import logger from "../config/logger.js";
 import {
+  adminModel,
   apartmentModel,
   cashModel,
   rentModel,
@@ -9,10 +11,13 @@ import {
   AN_ERROR_OCCURRED,
   APARTMENT_IS_OCCUPIED,
   DELETED_SUCCESSFULLY,
+  FORBIDDEN,
   INVALID_CREDENTIALS,
   NOT_FOUND,
-  RENT_ADDED_SUCCESSFULLY
+  RENT_ADDED_SUCCESSFULLY,
+  REQUEST_TOKEN
 } from "../util/api.message.js";
+import { isAuthenticUser } from "../util/function.js";
 
 export default class RentController {
   static async find(_req, res) {
@@ -51,6 +56,21 @@ export default class RentController {
 
   static async create(req, res) {
     try {
+      const jwt = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(jwt);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(tenantModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const id = req.params.id;
       const { apartmentId, cashId } = req.body;
 
@@ -114,6 +134,21 @@ export default class RentController {
 
   static async delete_(req, res) {
     try {
+      const jwt = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(jwt);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(adminModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const id = req.params.id;
 
       const result = await rentModel.findByIdAndDelete(id);

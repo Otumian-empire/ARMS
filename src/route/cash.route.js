@@ -1,4 +1,5 @@
 import { Router } from "express";
+import Auth from "../config/auth.js";
 import { cashController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
@@ -19,6 +20,7 @@ route.get(
 route.post(
   "/:id",
   [
+    Auth.hasBearerToken,
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.cashCreateRequestBody)
   ],
@@ -28,7 +30,7 @@ route.post(
 // delete cash data - cash privileges is needed
 route.delete(
   "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
+  [Auth.hasBearerToken, joiMiddleware(schemas.idRequestParams, "params")],
   cashController.delete_
 );
 

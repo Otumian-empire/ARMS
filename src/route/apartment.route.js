@@ -19,17 +19,17 @@ route.get(
 // create a apartment - add apartment data
 route.post(
   "/",
-  [Auth.hasBearerToken,
-  joiMiddleware(schemas.apartmentCreateRequestBody)],
+  [Auth.hasBearerToken, joiMiddleware(schemas.apartmentCreateRequestBody)],
   apartmentController.create
 );
 
 // update - apartment may update the room_number, description, fee
 route.put(
   "/:id",
-  [Auth.hasBearerToken,
-  joiMiddleware(schemas.idRequestParams, "params"),
-  joiMiddleware(schemas.apartmentUpdateRequestBody)
+  [
+    Auth.hasBearerToken,
+    joiMiddleware(schemas.idRequestParams, "params"),
+    joiMiddleware(schemas.apartmentUpdateRequestBody)
   ],
   apartmentController.update
 );

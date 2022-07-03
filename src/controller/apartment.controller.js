@@ -11,7 +11,11 @@ import {
   REQUEST_TOKEN,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-import { isAuthenticUser, isValidPrice, isValidRoomNumber } from "../util/function.js";
+import {
+  isAuthenticUser,
+  isValidPrice,
+  isValidRoomNumber
+} from "../util/function.js";
 
 export default class ApartmentController {
   static async find(_req, res) {
@@ -91,7 +95,7 @@ export default class ApartmentController {
       const result = await apartment.save();
 
       if (!result) {
-        throw new Error(AN_ERROR_OCCURRED)
+        throw new Error(AN_ERROR_OCCURRED);
       }
 
       return res.json({
@@ -186,7 +190,6 @@ export default class ApartmentController {
 
   static async delete_(req, res) {
     try {
-
       const token = req.token;
       req.token = undefined;
 

@@ -1,4 +1,5 @@
 import { compare, hash } from "bcrypt";
+import Auth from "../config/auth.js";
 import logger from "../config/logger.js";
 import { tenantModel } from "../model/index.js";
 import {
@@ -12,6 +13,7 @@ import {
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { rounds } from "../util/app.constant.js";
+import { isAuthenticUser } from "../util/function.js";
 
 export default class TenantController {
   static async find(_req, res) {
@@ -86,7 +88,7 @@ export default class TenantController {
 
       const result = await tenant.save();
 
-      if (!error) {
+      if (!result) {
         throw new Error(AN_ERROR_OCCURRED);
       }
 
@@ -109,34 +111,63 @@ export default class TenantController {
     try {
       const { username, password } = req.body;
 
-      const result = tenantModel.findOne({ username });
+      const result = await tenantModel.findOne({ username });
 
-      const same = await compare(password, result.password);
-
-      if (!same) {
-        // logger.error(error.message);
+      if (!result) {
         return res.json({
           success: false,
           message: INVALID_CREDENTIALS
         });
       }
+
+      const same = await compare(password, result.password);
+
+      if (!same) {
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS
+        });
+      }
+
+      const token = await Auth.generateJWT({
+        id: result.id,
+        username: result.username,
+        email: result.email
+      });
+
       return res.json({
         success: true,
         message: LOGIN_SUCCESSFUL,
-        id: result.id
+        id: result.id,
+        auth: token
       });
     } catch (error) {
       logger.error(error.message);
 
       return res.json({
         success: false,
-        message: AN_ERROR_OCCURRED
+        message: error.message
       });
     }
   }
 
   static async update(req, res) {
     try {
+      const jwt = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(jwt);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(tenantModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const { email, phone, kin } = req.body;
       const id = req.params.id;
 
@@ -187,6 +218,21 @@ export default class TenantController {
 
   static async delete_(req, res) {
     try {
+      const jwt = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(jwt);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(tenantModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const id = req.params.id;
 
       const deletedTenant = await tenantModel.findByIdAndRemove(id);
