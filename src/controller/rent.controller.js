@@ -20,9 +20,18 @@ import {
 import { isAuthenticUser } from "../util/function.js";
 
 export default class RentController {
-  static async find(_req, res) {
+  static async find(req, res) {
     try {
-      const rents = await rentModel.find().limit(10).select("-__v");
+      const page = parseInt(req.query.page) || PAGINATION.page;
+      const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
+
+      const { limit, skip } = pagination(page, pageSize);
+
+      const rents = await rentModel
+        .find()
+        .skip(skip)
+        .limit(limit)
+        .select("-__v");
 
       return res.json(rents);
     } catch (error) {

@@ -16,9 +16,18 @@ import { rounds } from "../util/app.constant.js";
 import { isAuthenticUser } from "../util/function.js";
 
 export default class TenantController {
-  static async find(_req, res) {
+  static async find(req, res) {
     try {
-      const tenants = await tenantModel.find().limit(10);
+      const page = parseInt(req.query.page) || PAGINATION.page;
+      const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
+
+      const { limit, skip } = pagination(page, pageSize);
+
+      const tenants = await tenantModel
+        .find()
+        .skip(skip)
+        .limit(limit)
+        .select("-password");
 
       if (!tenants) {
         throw new Error(NOT_FOUND);

@@ -12,9 +12,19 @@ import {
 import { generateToken, isAuthenticUser } from "../util/function.js";
 
 export default class CashController {
-  static async find(_req, res) {
+  static async find(req, res) {
     try {
-      const cashes = await cashModel.find().select("-__v").limit(10);
+      const page = parseInt(req.query.page) || PAGINATION.page;
+      const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
+
+      const { limit, skip } = pagination(page, pageSize);
+
+      const cashes = await cashModel
+        .find()
+        .skip(skip)
+        .limit(limit)
+        .select("-__v")
+        .limit(10);
 
       return res.json(cashes);
     } catch (error) {

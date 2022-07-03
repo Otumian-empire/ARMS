@@ -1,3 +1,5 @@
+import { ONE, PAGINATION } from "./app.constant.js";
+
 export function generateToken() {
   const SACK = "1234567890";
   const SACK_LENGTH = SACK.length;
@@ -36,4 +38,19 @@ export async function isAuthenticUser(model, payload = {}) {
     username: payload.username,
     email: payload.email
   });
+}
+
+export function pagination(page = 1, pageSize = 12) {
+  if (page < ONE) {
+    page = PAGINATION.page;
+  }
+
+  if (pageSize < ONE) {
+    pageSize = PAGINATION.pageSize;
+  }
+
+  let offset = (page - ONE) * pageSize;
+  let limit = pageSize;
+
+  return { limit, skip: offset };
 }

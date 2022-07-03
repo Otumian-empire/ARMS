@@ -11,16 +11,27 @@ import {
   REQUEST_TOKEN,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
+import { PAGINATION } from "../util/app.constant.js";
 import {
   isAuthenticUser,
   isValidPrice,
-  isValidRoomNumber
+  isValidRoomNumber,
+  pagination
 } from "../util/function.js";
 
 export default class ApartmentController {
-  static async find(_req, res) {
+  static async find(req, res) {
     try {
-      const apartments = await apartmentModel.find().limit(10).select("-__v");
+      const page = parseInt(req.query.page) || PAGINATION.page;
+      const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
+
+      const { limit, skip } = pagination(page, pageSize);
+
+      const apartments = await apartmentModel
+        .find()
+        .skip(skip)
+        .limit(limit)
+        .select("-__v");
 
       return res.json(apartments);
     } catch (error) {
