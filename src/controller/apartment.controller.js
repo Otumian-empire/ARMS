@@ -19,7 +19,7 @@ export default class ApartmentController {
       .select("-__v")
       .then((apartments) => res.json(apartments))
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -42,7 +42,7 @@ export default class ApartmentController {
         return res.json(apartment);
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -76,7 +76,7 @@ export default class ApartmentController {
 
     apartment.save((error, result) => {
       if (error) {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -131,7 +131,7 @@ export default class ApartmentController {
 
         apartment.save((error, updatedapartmentModel) => {
           if (error) {
-            logger.error(error);
+            logger.error(error.message);
 
             return res.json({
               success: false,
@@ -147,7 +147,7 @@ export default class ApartmentController {
         });
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -173,7 +173,7 @@ export default class ApartmentController {
         });
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,

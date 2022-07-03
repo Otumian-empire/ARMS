@@ -26,7 +26,7 @@ export default class TenantController {
         return res.json(tenants);
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -48,7 +48,7 @@ export default class TenantController {
         return res.json(tenant);
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -78,7 +78,7 @@ export default class TenantController {
 
     hash(password, rounds, (error, hashedPassword) => {
       if (error) {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -99,7 +99,7 @@ export default class TenantController {
 
       tenant.save((error, result) => {
         if (error) {
-          logger.error(error);
+          logger.error(error.message);
 
           return res.json({
             success: false,
@@ -124,7 +124,7 @@ export default class TenantController {
       .then((result) => {
         compare(password, result.password, (error, same) => {
           if (error || !same) {
-            // logger.error(error);
+            // logger.error(error.message);
             return res.json({
               success: false,
               message: INVALID_CREDENTIALS
@@ -139,7 +139,7 @@ export default class TenantController {
         });
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -179,7 +179,7 @@ export default class TenantController {
 
         tenant.save((error, updatedTenant) => {
           if (error) {
-            logger.error(error);
+            logger.error(error.message);
 
             return res.json({
               success: false,
@@ -195,7 +195,7 @@ export default class TenantController {
         });
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -209,7 +209,7 @@ export default class TenantController {
 
     tenantModel.findByIdAndRemove(id, (error, deletedTenant) => {
       if (error) {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,

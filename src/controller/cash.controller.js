@@ -16,7 +16,7 @@ export default class CashController {
       .limit(10)
       .then((cashes) => res.json(cashes))
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -41,7 +41,7 @@ export default class CashController {
       .limit(10)
       .then((results) => res.json(results))
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -88,7 +88,7 @@ export default class CashController {
             });
           })
           .catch((error) => {
-            logger.error(error);
+            logger.error(error.message);
 
             return res.json({
               success: false,
@@ -97,7 +97,7 @@ export default class CashController {
           });
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -111,7 +111,7 @@ export default class CashController {
 
     cashModel.findByIdAndRemove(id, (error, deletedCash) => {
       if (error) {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,

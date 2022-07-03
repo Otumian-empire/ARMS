@@ -25,7 +25,7 @@ export default class AdminController {
 
       return res.json(admin);
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
 
       return res.json({
         success: false,
@@ -54,7 +54,7 @@ export default class AdminController {
         id: result.id
       });
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
 
       return res.json({
         success: false,
@@ -85,7 +85,7 @@ export default class AdminController {
         id: result.id
       });
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
 
       return res.json({
         success: false,
@@ -120,7 +120,7 @@ export default class AdminController {
         id: updatedResult.id
       });
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
 
       return res.json({
         success: false,
@@ -145,7 +145,7 @@ export default class AdminController {
         id: result.id
       });
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
 
       return res.json({
         success: false,

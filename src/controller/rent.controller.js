@@ -22,7 +22,7 @@ export default class RentController {
       .select("-__v")
       .then((rents) => res.json(rents))
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -45,7 +45,7 @@ export default class RentController {
         return res.json(rent);
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -111,7 +111,7 @@ export default class RentController {
                           });
                       })
                       .catch((error) => {
-                        logger.error(error);
+                        logger.error(error.message);
 
                         return res.json({
                           success: false,
@@ -120,7 +120,7 @@ export default class RentController {
                       });
                   })
                   .catch((error) => {
-                    logger.error(error);
+                    logger.error(error.message);
 
                     return res.json({
                       success: false,
@@ -129,7 +129,7 @@ export default class RentController {
                   });
               })
               .catch((error) => {
-                logger.error(error);
+                logger.error(error.message);
 
                 return res.json({
                   success: false,
@@ -138,7 +138,7 @@ export default class RentController {
               });
           })
           .catch((error) => {
-            logger.error(error);
+            logger.error(error.message);
 
             return res.json({
               success: false,
@@ -147,7 +147,7 @@ export default class RentController {
           });
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         return res.json({
           success: false,
@@ -173,7 +173,7 @@ export default class RentController {
         });
       })
       .catch((error) => {
-        logger.error(error);
+        logger.error(error.message);
 
         if (error) {
           return res.json({

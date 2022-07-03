@@ -19,8 +19,7 @@ mongoose.connection
     logger.info(DATABASE_CONNECTED);
   })
   .on("error ", function (error) {
-    logger.info(DATABASE_NOT_CONNECTED);
-    logger.error(error);
+    logger.error(error.message);
   });
 
 export default mongoose;
