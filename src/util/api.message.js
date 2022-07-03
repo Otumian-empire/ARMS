@@ -30,3 +30,4 @@ export const DATABASE_NOT_CONNECTED = "Database not connected successfully";
 export const INVALID_ROOM_NUMBER = "Invalid room number";
 export const INVALID_PRICE = "Invalid price, price must be numbers";
 export const FORBIDDEN = "Forbidden";
+export const REQUEST_TOKEN = "Kindly request for a new token by logging in";

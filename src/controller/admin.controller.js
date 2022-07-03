@@ -5,18 +5,37 @@ import {
   ADMIN_CREATED_SUCCESSFULLY,
   AN_ERROR_OCCURRED,
   DELETED_SUCCESSFULLY,
+  FORBIDDEN,
   INVALID_CREDENTIALS,
   LOGIN_SUCCESSFUL,
   NOT_FOUND,
+  REQUEST_TOKEN,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { rounds } from "../util/app.constant.js";
+import Auth from "../config/auth.js";
+import { isAuthenticUser } from "../util/function.js";
 
 export default class AdminController {
   static async findById(req, res) {
     const id = req.params.id;
 
     try {
+      const token = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(token);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(adminModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const admin = await adminModel.findById(id).select("-password -__v");
 
       if (!admin) {
@@ -79,10 +98,17 @@ export default class AdminController {
         throw new Error(INVALID_CREDENTIALS);
       }
 
+      const token = await Auth.generateJWT({
+        id: result.id,
+        username: result.username,
+        email: result.email
+      });
+
       return res.json({
         success: true,
         message: LOGIN_SUCCESSFUL,
-        id: result.id
+        id: result.id,
+        auth: token
       });
     } catch (error) {
       logger.error(error.message);
@@ -99,7 +125,23 @@ export default class AdminController {
     const email = req.body.email;
 
     try {
+      const token = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(token);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(adminModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const result = await adminModel.findById(id);
+
       if (!result) {
         throw new Error(NOT_FOUND);
       }
@@ -133,6 +175,21 @@ export default class AdminController {
     const id = req.params.id;
 
     try {
+      const token = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(token);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(adminModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const result = await adminModel.findByIdAndDelete(id);
 
       if (!result) {

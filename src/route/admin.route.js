@@ -2,13 +2,14 @@ import { Router } from "express";
 import { adminController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schema from "../util/joi.schema.js";
+import Auth from "../config/auth.js";
 
 const route = Router();
 
 // fetch an admin
 route.get(
   "/:id",
-  joiMiddleware(schema.idRequestParams, "params"),
+  [Auth.hasBearerToken, joiMiddleware(schema.idRequestParams, "params")],
   adminController.findById
 );
 
@@ -19,7 +20,7 @@ route.post(
   adminController.create
 );
 
-// login admin - they can change their data
+// login admin
 route.post(
   "/login",
   joiMiddleware(schema.loginRequestBody),
@@ -30,6 +31,7 @@ route.post(
 route.put(
   "/:id",
   [
+    Auth.hasBearerToken,
     joiMiddleware(schema.idRequestParams, "params"),
     joiMiddleware(schema.adminUpdateRequestBody)
   ],
@@ -39,7 +41,7 @@ route.put(
 // delete admin data - admin privileges is needed
 route.delete(
   "/:id",
-  joiMiddleware(schema.idRequestParams, "params"),
+  [Auth.hasBearerToken, joiMiddleware(schema.idRequestParams, "params")],
   adminController.delete_
 );
 

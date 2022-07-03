@@ -29,3 +29,11 @@ export function isValidRoomNumber(roomNumber = "") {
 export function isValidPrice(price = 0) {
   return price && !isNaN(Number(price));
 }
+
+export async function isAuthenticUser(model, payload = {}) {
+  return await model.findOne({
+    id: payload.id,
+    username: payload.username,
+    email: payload.email
+  });
+}

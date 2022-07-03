@@ -3,21 +3,17 @@ import jwt from "jsonwebtoken";
 import { FORBIDDEN } from "../util/api.message.js";
 import { JWT_SECRET, ONE_WEEK } from "../util/app.constant.js";
 
-class Auth {
+export default class Auth {
   static async generateJWT(payload = {}) {
-    if (!payload.iat) {
-      const JWT_IAT = Date.now() + ONE_WEEK;
+    const JWT_IAT = Date.now() + ONE_WEEK;
 
-      payload.iat = JWT_IAT;
-    }
-
-    const jwtToken = jwt.sign(payload, JWT_SECRET);
+    const jwtToken = jwt.sign({ ...payload, iat: JWT_IAT }, JWT_SECRET);
     return jwtToken;
   }
 
   static async verifyJWT(token) {
     const { id, username, email, iat } = jwt.verify(token, JWT_SECRET);
-    return { id, username, email, hasExpired: hasExpired(iat) };
+    return { id, username, email, hasExpired: await Auth.hasExpired(iat) };
   }
 
   static async hasBearerToken(req, res, next) {
@@ -34,7 +30,7 @@ class Auth {
     next();
   }
 
-  async hasExpired(ait) {
-    return Date.now() > parseInt(ait);
+  static async hasExpired(ait) {
+    return Date.now() >= parseInt(ait);
   }
 }
