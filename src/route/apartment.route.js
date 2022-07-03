@@ -1,4 +1,5 @@
 import { Router } from "express";
+import Auth from "../config/auth.js";
 import { apartmentController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
@@ -18,16 +19,17 @@ route.get(
 // create a apartment - add apartment data
 route.post(
   "/",
-  joiMiddleware(schemas.apartmentCreateRequestBody),
+  [Auth.hasBearerToken,
+  joiMiddleware(schemas.apartmentCreateRequestBody)],
   apartmentController.create
 );
 
 // update - apartment may update the room_number, description, fee
 route.put(
   "/:id",
-  [
-    joiMiddleware(schemas.idRequestParams, "params"),
-    joiMiddleware(schemas.apartmentUpdateRequestBody)
+  [Auth.hasBearerToken,
+  joiMiddleware(schemas.idRequestParams, "params"),
+  joiMiddleware(schemas.apartmentUpdateRequestBody)
   ],
   apartmentController.update
 );
@@ -35,7 +37,7 @@ route.put(
 // delete an apartment data - admin privileges is needed
 route.delete(
   "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
+  [Auth.hasBearerToken, joiMiddleware(schemas.idRequestParams, "params")],
   apartmentController.delete_
 );
 

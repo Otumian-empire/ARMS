@@ -1,5 +1,6 @@
+import Auth from "../config/auth.js";
 import logger from "../config/logger.js";
-import { apartmentModel } from "../model/index.js";
+import { adminModel, apartmentModel } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   APARTMENT_CREATED_SUCCESSFULLY,
@@ -7,9 +8,10 @@ import {
   INVALID_PRICE,
   INVALID_ROOM_NUMBER,
   NOT_FOUND,
+  REQUEST_TOKEN,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-import { isValidPrice, isValidRoomNumber } from "../util/function.js";
+import { isAuthenticUser, isValidPrice, isValidRoomNumber } from "../util/function.js";
 
 export default class ApartmentController {
   static async find(_req, res) {
@@ -49,6 +51,21 @@ export default class ApartmentController {
 
   static async create(req, res) {
     try {
+      const token = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(token);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(adminModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       let { roomNumber, description, price } = req.body;
 
       if (!isValidRoomNumber(roomNumber)) {
@@ -73,6 +90,10 @@ export default class ApartmentController {
 
       const result = await apartment.save();
 
+      if (!result) {
+        throw new Error(AN_ERROR_OCCURRED)
+      }
+
       return res.json({
         success: true,
         message: APARTMENT_CREATED_SUCCESSFULLY,
@@ -81,15 +102,32 @@ export default class ApartmentController {
     } catch (error) {
       logger.error(error.message);
 
+      console.log(error);
+
       return res.json({
         success: false,
-        message: AN_ERROR_OCCURRED
+        message: error.message
       });
     }
   }
 
   static async update(req, res) {
     try {
+      const token = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(token);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(adminModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const id = req.params.id;
       const { roomNumber, description, price } = req.body;
 
@@ -148,6 +186,22 @@ export default class ApartmentController {
 
   static async delete_(req, res) {
     try {
+
+      const token = req.token;
+      req.token = undefined;
+
+      const payload = await Auth.verifyJWT(token);
+
+      if (payload.hasExpired) {
+        throw new Error(REQUEST_TOKEN);
+      }
+
+      const isAuth = await isAuthenticUser(adminModel, payload);
+
+      if (!isAuth) {
+        return res.status(403).json({ success: false, message: FORBIDDEN });
+      }
+
       const id = req.params.id;
 
       const result = await apartmentModel.findByIdAndDelete(id);
