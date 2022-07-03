@@ -9,121 +9,111 @@ import {
 import { generateToken } from "../util/function.js";
 
 export default class CashController {
-  static find(_req, res) {
-    cashModel
-      .find()
-      .select("-__v")
-      .limit(10)
-      .then((cashes) => res.json(cashes))
-      .catch((error) => {
-        logger.error(error.message);
+  static async find(_req, res) {
+    try {
+      const cashes = await cashModel.find().select("-__v").limit(10);
 
-        return res.json({
-          success: false,
-          message: AN_ERROR_OCCURRED
-        });
-      });
-  }
+      return res.json(cashes);
+    } catch (error) {
+      logger.error(error.message);
 
-  static findByTenantId(req, res) {
-    const id = req.params.id;
-
-    if (!id) {
-      return res.json({
-        success: false,
-        message: INVALID_CREDENTIALS
-      });
-    }
-
-    cashModel
-      .find({ tenantId: id })
-      .select("-__v")
-      .limit(10)
-      .then((results) => res.json(results))
-      .catch((error) => {
-        logger.error(error.message);
-
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      });
-  }
-
-  static create(req, res) {
-    const id = req.params.id;
-    const amount = Number(req.body.amount) || 0;
-
-    if (!id || !amount) {
       return res.json({
         success: false,
         message: AN_ERROR_OCCURRED
       });
     }
-
-    const token = generateToken();
-
-    tenantModel
-      .findById(id)
-      .then((result) => {
-        if (!result) {
-          throw new Error(INVALID_CREDENTIALS);
-        }
-
-        cashModel
-          .create({
-            tenantId: id,
-            token,
-            amount
-          })
-          .then((result) => {
-            if (!result) {
-              throw new Error(AN_ERROR_OCCURRED);
-            }
-
-            return res.json({
-              success: true,
-              message: CASH_ADDED_SUCCESSFULLY,
-              id: result.id
-            });
-          })
-          .catch((error) => {
-            logger.error(error.message);
-
-            return res.json({
-              success: false,
-              message: error.message
-            });
-          });
-      })
-      .catch((error) => {
-        logger.error(error.message);
-
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      });
   }
 
-  static delete_(req, res) {
-    const id = req.params.id;
+  static async findByTenantId(req, res) {
+    try {
+      const id = req.params.id;
 
-    cashModel.findByIdAndRemove(id, (error, deletedCash) => {
-      if (error) {
-        logger.error(error.message);
-
+      if (!id) {
         return res.json({
           success: false,
           message: INVALID_CREDENTIALS
         });
       }
 
+      const results = await cashModel
+        .find({ tenantId: id })
+        .select("-__v")
+        .limit(10);
+
+      return res.json(results);
+    } catch (error) {
+      logger.error(error.message);
+
+      return res.json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  static async create(req, res) {
+    try {
+      const id = req.params.id;
+      const amount = Number(req.body.amount) || 0;
+
+      if (!id || !amount) {
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED
+        });
+      }
+
+      const token = generateToken();
+
+      const tenant = await tenantModel.findById(id);
+
+      if (!tenant) {
+        throw new Error(INVALID_CREDENTIALS);
+      }
+
+      const cash = await cashModel.create({
+        tenantId: tenant.id,
+        token,
+        amount
+      });
+
+      if (!cash) {
+        throw new Error(AN_ERROR_OCCURRED);
+      }
+
+      return res.json({
+        success: true,
+        message: CASH_ADDED_SUCCESSFULLY,
+        id: cash.id
+      });
+    } catch (error) {
+      logger.error(error.message);
+
+      return res.json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  static async delete_(req, res) {
+    try {
+      const id = req.params.id;
+
+      const result = await cashModel.findByIdAndRemove(id);
+
       return res.json({
         success: true,
         message: DELETED_SUCCESSFULLY,
-        id: deletedCash.id
+        id: result.id
       });
-    });
+    } catch (error) {
+      logger.error(error.message);
+
+      return res.json({
+        success: false,
+        message: INVALID_CREDENTIALS
+      });
+    }
   }
 }

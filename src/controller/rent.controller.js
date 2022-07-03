@@ -15,172 +15,127 @@ import {
 } from "../util/api.message.js";
 
 export default class RentController {
-  static find(_req, res) {
-    rentModel
-      .find()
-      .limit(10)
-      .select("-__v")
-      .then((rents) => res.json(rents))
-      .catch((error) => {
-        logger.error(error.message);
+  static async find(_req, res) {
+    try {
+      const rents = await rentModel.find().limit(10).select("-__v");
 
-        return res.json({
-          success: false,
-          message: AN_ERROR_OCCURRED
-        });
-      });
-  }
+      return res.json(rents);
+    } catch (error) {
+      logger.error(error.message);
 
-  static findOneByRentId(req, res) {
-    const id = req.params.id;
-
-    rentModel
-      .findById(id)
-      .select("-__v")
-      .then((rent) => {
-        if (!rent) {
-          throw new Error(NOT_FOUND);
-        }
-
-        return res.json(rent);
-      })
-      .catch((error) => {
-        logger.error(error.message);
-
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      });
-  }
-
-  static create(req, res) {
-    const id = req.params.id;
-    const { apartmentId, cashId } = req.body;
-
-    if (!id || !apartmentId || !cashId) {
       return res.json({
         success: false,
-        message: INVALID_CREDENTIALS
+        message: AN_ERROR_OCCURRED
       });
     }
+  }
 
-    apartmentModel
-      .findById(apartmentId)
-      .then((apartment) => {
-        if (!apartment) {
-          throw new Error(INVALID_CREDENTIALS);
-        }
+  static async findOneByRentId(req, res) {
+    try {
+      const id = req.params.id;
+      const rent = await rentModel.findById(id).select("-__v");
 
-        tenantModel
-          .findById(id)
-          .then((tenant) => {
-            if (!tenant) {
-              throw new Error(INVALID_CREDENTIALS);
-            }
+      if (!rent) {
+        throw new Error(NOT_FOUND);
+      }
+      return res.json(rent);
+    } catch (error) {
+      logger.error(error.message);
 
-            cashModel
-              .find({ _id: cashId, tenantId: id })
-              .then((cash) => {
-                if (!cash) {
-                  throw new Error(NOT_FOUND);
-                }
+      return res.json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
 
-                rentModel
-                  .findOne({ apartmentId })
-                  .then((isOccupied) => {
-                    if (isOccupied) {
-                      throw new Error(APARTMENT_IS_OCCUPIED);
-                    }
+  static async create(req, res) {
+    try {
+      const id = req.params.id;
+      const { apartmentId, cashId } = req.body;
 
-                    // TODO: add a field to the cash table that indicates the
-                    // status of cash. we can not rent with an apartment with
-                    // a used cash ID
-                    rentModel
-                      .create({
-                        tenantId: id,
-                        apartmentId,
-                        cashId
-                      })
-                      .then((rent) => {
-                        if (rent)
-                          return res.json({
-                            success: true,
-                            message: RENT_ADDED_SUCCESSFULLY,
-                            id: rent.id
-                          });
-                      })
-                      .catch((error) => {
-                        logger.error(error.message);
+      if (!id || !apartmentId || !cashId) {
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS
+        });
+      }
 
-                        return res.json({
-                          success: false,
-                          message: error.message
-                        });
-                      });
-                  })
-                  .catch((error) => {
-                    logger.error(error.message);
+      const apartment = await apartmentModel.findById(apartmentId);
+      if (!apartment) {
+        throw new Error(INVALID_CREDENTIALS);
+      }
 
-                    return res.json({
-                      success: false,
-                      message: error.message
-                    });
-                  });
-              })
-              .catch((error) => {
-                logger.error(error.message);
+      const tenant = await tenantModel.findById(id);
 
-                return res.json({
-                  success: false,
-                  message: error.message
-                });
-              });
-          })
-          .catch((error) => {
-            logger.error(error.message);
+      if (!tenant) {
+        throw new Error(INVALID_CREDENTIALS);
+      }
 
-            return res.json({
-              success: false,
-              message: error.message
-            });
-          });
-      })
-      .catch((error) => {
-        logger.error(error.message);
+      const cash = await cashModel.find({ _id: cashId, tenantId: id });
 
+      if (!cash) {
+        throw new Error(NOT_FOUND);
+      }
+
+      const isOccupied = await rentModel.findOne({ apartmentId });
+
+      if (isOccupied) {
+        throw new Error(APARTMENT_IS_OCCUPIED);
+      }
+
+      // TODO: add a field to the cash table that indicates the
+      // status of cash. we can not rent with an apartment with
+      // a used cash ID
+      const rent = await rentModel.create({
+        tenantId: id,
+        apartmentId,
+        cashId
+      });
+
+      if (!rent) {
+        throw new Error(AN_ERROR_OCCURRED);
+      }
+
+      return res.json({
+        success: true,
+        message: RENT_ADDED_SUCCESSFULLY,
+        id: rent.id
+      });
+    } catch (error) {
+      logger.error(error.message);
+
+      return res.json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  static async delete_(req, res) {
+    try {
+      const id = req.params.id;
+
+      const result = await rentModel.findByIdAndDelete(id);
+
+      if (!result) {
+        throw new Error(NOT_FOUND);
+      }
+
+      return res.json({
+        success: true,
+        message: DELETED_SUCCESSFULLY,
+        id: result.id
+      });
+    } catch (error) {
+      logger.error(error.message);
+
+      if (error) {
         return res.json({
           success: false,
           message: error.message
         });
-      });
-  }
-
-  static delete_(req, res) {
-    const id = req.params.id;
-
-    rentModel
-      .findByIdAndDelete(id)
-      .then((result) => {
-        if (!result) {
-          throw new Error(NOT_FOUND);
-        }
-
-        return res.json({
-          success: true,
-          message: DELETED_SUCCESSFULLY,
-          id: result.id
-        });
-      })
-      .catch((error) => {
-        logger.error(error.message);
-
-        if (error) {
-          return res.json({
-            success: false,
-            message: error.message
-          });
-        }
-      });
+      }
+    }
   }
 }

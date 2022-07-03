@@ -14,77 +14,64 @@ import {
 import { rounds } from "../util/app.constant.js";
 
 export default class TenantController {
-  static find(_req, res) {
-    tenantModel
-      .find()
-      .limit(10)
-      .then((tenants) => {
-        if (!tenants) {
-          throw new Error(NOT_FOUND);
-        }
+  static async find(_req, res) {
+    try {
+      const tenants = await tenantModel.find().limit(10);
 
-        return res.json(tenants);
-      })
-      .catch((error) => {
-        logger.error(error.message);
+      if (!tenants) {
+        throw new Error(NOT_FOUND);
+      }
 
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      });
-  }
+      return res.json(tenants);
+    } catch (error) {
+      logger.error(error.message);
 
-  static findById(req, res) {
-    const id = req.params.id;
-
-    tenantModel
-      .findById(id)
-      .then((tenant) => {
-        if (!tenant) {
-          throw new Error(NOT_FOUND);
-        }
-
-        return res.json(tenant);
-      })
-      .catch((error) => {
-        logger.error(error.message);
-
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      });
-  }
-
-  static create(req, res) {
-    let {
-      fullName,
-      username,
-      password,
-      email,
-      phone,
-      dob,
-      prevResidenceAddress,
-      kin
-    } = req.body;
-
-    if (!kin.fullName || !kin.email || !kin.phone || !kin.residenceAddress) {
       return res.json({
         success: false,
-        message: KIN_IS_REQUIRED
+        message: error.message
       });
     }
+  }
 
-    hash(password, rounds, (error, hashedPassword) => {
-      if (error) {
-        logger.error(error.message);
+  static async findById(req, res) {
+    try {
+      const id = req.params.id;
 
-        return res.json({
-          success: false,
-          message: error.message
-        });
+      const tenant = await tenantModel.findById(id);
+
+      if (!tenant) {
+        throw new Error(NOT_FOUND);
       }
+
+      return res.json(tenant);
+    } catch (error) {
+      logger.error(error.message);
+
+      return res.json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  static async create(req, res) {
+    try {
+      let {
+        fullName,
+        username,
+        password,
+        email,
+        phone,
+        dob,
+        prevResidenceAddress,
+        kin
+      } = req.body;
+
+      if (!kin.fullName || !kin.email || !kin.phone || !kin.residenceAddress) {
+        throw new Error(KIN_IS_REQUIRED);
+      }
+
+      const hashedPassword = await hash(password, rounds);
 
       let tenant = new tenantModel({
         fullName,
@@ -97,131 +84,127 @@ export default class TenantController {
         kin
       });
 
-      tenant.save((error, result) => {
-        if (error) {
-          logger.error(error.message);
+      const result = await tenant.save();
 
-          return res.json({
-            success: false,
-            message: AN_ERROR_OCCURRED
-          });
-        }
+      if (!error) {
+        throw new Error(AN_ERROR_OCCURRED);
+      }
 
-        return res.json({
-          success: true,
-          message: TENANT_CREATED_SUCCESSFULLY,
-          id: result.id
-        });
+      return res.json({
+        success: true,
+        message: TENANT_CREATED_SUCCESSFULLY,
+        id: result.id
       });
-    });
+    } catch (error) {
+      logger.error(error.message);
+
+      return res.json({
+        success: false,
+        message: error.message
+      });
+    }
   }
 
-  static login(req, res) {
-    const { username, password } = req.body;
+  static async login(req, res) {
+    try {
+      const { username, password } = req.body;
 
-    tenantModel
-      .findOne({ username })
-      .then((result) => {
-        compare(password, result.password, (error, same) => {
-          if (error || !same) {
-            // logger.error(error.message);
-            return res.json({
-              success: false,
-              message: INVALID_CREDENTIALS
-            });
-          }
+      const result = tenantModel.findOne({ username });
 
-          return res.json({
-            success: true,
-            message: LOGIN_SUCCESSFUL,
-            id: result.id
-          });
-        });
-      })
-      .catch((error) => {
-        logger.error(error.message);
+      const same = await compare(password, result.password);
 
-        return res.json({
-          success: false,
-          message: AN_ERROR_OCCURRED
-        });
-      });
-  }
-
-  static update(req, res) {
-    const { email, phone, kin } = req.body;
-    const id = req.params.id;
-
-    tenantModel
-      .findById(id)
-      .then((tenant) => {
-        if (!tenant) {
-          throw new Error(INVALID_CREDENTIALS);
-        }
-
-        if (email) {
-          tenant.email = email;
-        }
-
-        if (phone) {
-          tenant.phone = phone;
-        }
-
-        if (kin) {
-          if (kin.email) {
-            tenant.kin.email = kin.email;
-          }
-
-          if (kin.phone) {
-            tenant.kin.phone = kin.phone;
-          }
-        }
-
-        tenant.save((error, updatedTenant) => {
-          if (error) {
-            logger.error(error.message);
-
-            return res.json({
-              success: false,
-              message: AN_ERROR_OCCURRED
-            });
-          }
-
-          return res.json({
-            success: true,
-            message: UPDATE_SUCCESSFUL,
-            id: updatedTenant.id
-          });
-        });
-      })
-      .catch((error) => {
-        logger.error(error.message);
-
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      });
-  }
-
-  static delete_(req, res) {
-    const id = req.params.id;
-
-    tenantModel.findByIdAndRemove(id, (error, deletedTenant) => {
-      if (error) {
-        logger.error(error.message);
-
+      if (!same) {
+        // logger.error(error.message);
         return res.json({
           success: false,
           message: INVALID_CREDENTIALS
         });
       }
+      return res.json({
+        success: true,
+        message: LOGIN_SUCCESSFUL,
+        id: result.id
+      });
+    } catch (error) {
+      logger.error(error.message);
 
+      return res.json({
+        success: false,
+        message: AN_ERROR_OCCURRED
+      });
+    }
+  }
+
+  static async update(req, res) {
+    try {
+      const { email, phone, kin } = req.body;
+      const id = req.params.id;
+
+      const tenant = await tenantModel.findById(id);
+
+      if (!tenant) {
+        throw new Error(INVALID_CREDENTIALS);
+      }
+
+      if (email) {
+        tenant.email = email;
+      }
+
+      if (phone) {
+        tenant.phone = phone;
+      }
+
+      if (kin) {
+        if (kin.email) {
+          tenant.kin.email = kin.email;
+        }
+
+        if (kin.phone) {
+          tenant.kin.phone = kin.phone;
+        }
+      }
+
+      const updatedTenant = await tenant.save();
+
+      if (!updatedTenant) {
+        throw new Error(AN_ERROR_OCCURRED);
+      }
+
+      return res.json({
+        success: true,
+        message: UPDATE_SUCCESSFUL,
+        id: updatedTenant.id
+      });
+    } catch (error) {
+      logger.error(error.message);
+
+      return res.json({
+        success: false,
+        message: error.message
+      });
+    }
+  }
+
+  static async delete_(req, res) {
+    try {
+      const id = req.params.id;
+
+      const deletedTenant = await tenantModel.findByIdAndRemove(id);
+      if (!deletedTenant) {
+        throw new Error(INVALID_CREDENTIALS);
+      }
       return res.json({
         success: true,
         message: DELETED_SUCCESSFULLY,
         id: deletedTenant.id
       });
-    });
+    } catch (error) {
+      logger.error(error.message);
+
+      return res.json({
+        success: false,
+        message: error.message
+      });
+    }
   }
 }
