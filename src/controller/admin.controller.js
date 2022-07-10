@@ -1,4 +1,5 @@
 import { compare, hash } from "bcrypt";
+import Auth from "../config/auth.js";
 import logger from "../config/logger.js";
 import { adminModel } from "../model/index.js";
 import {
@@ -13,7 +14,6 @@ import {
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { rounds } from "../util/app.constant.js";
-import Auth from "../config/auth.js";
 import { isAuthenticUser } from "../util/function.js";
 
 export default class AdminController {
@@ -21,14 +21,8 @@ export default class AdminController {
     const id = req.params.id;
 
     try {
-      const token = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(token);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
+      const payload = req.payload;
+      req.payload = undefined;
 
       const isAuth = await isAuthenticUser(adminModel, payload);
 
@@ -54,9 +48,9 @@ export default class AdminController {
   }
 
   static async create(req, res) {
-    const { username, password, email } = req.body;
-
     try {
+
+      const { username, password, email } = req.body;
       const hashedPassword = await hash(password, rounds);
 
       let admin = new adminModel({
@@ -83,9 +77,9 @@ export default class AdminController {
   }
 
   static async login(req, res) {
-    const { username, password } = req.body;
 
     try {
+      const { username, password } = req.body;
       const result = await adminModel.findOne({ username });
 
       if (!result) {
@@ -121,10 +115,10 @@ export default class AdminController {
   }
 
   static async update(req, res) {
-    const id = req.params.id;
-    const email = req.body.email;
-
     try {
+      const id = req.params.id;
+      const email = req.body.email;
+
       const token = req.token;
       req.token = undefined;
 
@@ -172,9 +166,9 @@ export default class AdminController {
   }
 
   static async delete_(req, res) {
-    const id = req.params.id;
 
     try {
+      const id = req.params.id;
       const token = req.token;
       req.token = undefined;
 

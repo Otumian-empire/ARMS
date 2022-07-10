@@ -19,7 +19,7 @@ route.get(
 // create a apartment - add apartment data
 route.post(
   "/",
-  [Auth.hasBearerToken, joiMiddleware(schemas.apartmentCreateRequestBody)],
+  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schemas.apartmentCreateRequestBody)],
   apartmentController.create
 );
 
@@ -28,6 +28,7 @@ route.put(
   "/:id",
   [
     Auth.hasBearerToken,
+    Auth.hasExpiredToken,
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.apartmentUpdateRequestBody)
   ],
@@ -37,7 +38,7 @@ route.put(
 // delete an apartment data - admin privileges is needed
 route.delete(
   "/:id",
-  [Auth.hasBearerToken, joiMiddleware(schemas.idRequestParams, "params")],
+  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schemas.idRequestParams, "params")],
   apartmentController.delete_
 );
 

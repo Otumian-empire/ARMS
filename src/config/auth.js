@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-import { FORBIDDEN } from "../util/api.message.js";
+import { FORBIDDEN, REQUEST_TOKEN } from "../util/api.message.js";
 import { JWT_SECRET, ONE_WEEK } from "../util/app.constant.js";
 
 export default class Auth {
@@ -28,6 +28,21 @@ export default class Auth {
     req.token = token;
 
     next();
+  }
+
+  static async hasExpiredToken(req, res, next) {
+    const jwt = req.token;
+    req.token = undefined;
+
+    const payload = await Auth.verifyJWT(jwt);
+
+    if (payload.hasExpired) {
+      return res.json({ success: false, message: REQUEST_TOKEN });
+    }
+
+    req.payload = payload
+
+    return next()
   }
 
   static async hasExpired(ait) {

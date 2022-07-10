@@ -21,6 +21,7 @@ route.post(
   "/:id",
   [
     Auth.hasBearerToken,
+    Auth.hasExpiredToken,
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.cashCreateRequestBody)
   ],
@@ -30,7 +31,7 @@ route.post(
 // delete cash data - cash privileges is needed
 route.delete(
   "/:id",
-  [Auth.hasBearerToken, joiMiddleware(schemas.idRequestParams, "params")],
+  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schemas.idRequestParams, "params")],
   cashController.delete_
 );
 

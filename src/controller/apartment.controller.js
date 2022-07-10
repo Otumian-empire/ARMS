@@ -1,4 +1,3 @@
-import Auth from "../config/auth.js";
 import logger from "../config/logger.js";
 import { adminModel, apartmentModel } from "../model/index.js";
 import {
@@ -8,7 +7,6 @@ import {
   INVALID_PRICE,
   INVALID_ROOM_NUMBER,
   NOT_FOUND,
-  REQUEST_TOKEN,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { PAGINATION } from "../util/app.constant.js";
@@ -66,14 +64,8 @@ export default class ApartmentController {
 
   static async create(req, res) {
     try {
-      const token = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(token);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
+      const payload = req.payload;
+      req.payload = undefined;
 
       const isAuth = await isAuthenticUser(adminModel, payload);
 
@@ -128,14 +120,8 @@ export default class ApartmentController {
 
   static async update(req, res) {
     try {
-      const token = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(token);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
+      const payload = req.payload;
+      req.payload = undefined;
 
       const isAuth = await isAuthenticUser(adminModel, payload);
 
@@ -201,14 +187,8 @@ export default class ApartmentController {
 
   static async delete_(req, res) {
     try {
-      const token = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(token);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
+      const payload = req.payload;
+      req.payload = undefined;
 
       const isAuth = await isAuthenticUser(adminModel, payload);
 

@@ -1,15 +1,15 @@
 import { Router } from "express";
+import Auth from "../config/auth.js";
 import { adminController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schema from "../util/joi.schema.js";
-import Auth from "../config/auth.js";
 
 const route = Router();
 
 // fetch an admin
 route.get(
   "/:id",
-  [Auth.hasBearerToken, joiMiddleware(schema.idRequestParams, "params")],
+  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schema.idRequestParams, "params")],
   adminController.findById
 );
 

@@ -1,4 +1,3 @@
-import Auth from "../config/auth.js";
 import logger from "../config/logger.js";
 import {
   adminModel,
@@ -14,8 +13,7 @@ import {
   FORBIDDEN,
   INVALID_CREDENTIALS,
   NOT_FOUND,
-  RENT_ADDED_SUCCESSFULLY,
-  REQUEST_TOKEN
+  RENT_ADDED_SUCCESSFULLY
 } from "../util/api.message.js";
 import { isAuthenticUser } from "../util/function.js";
 
@@ -65,14 +63,8 @@ export default class RentController {
 
   static async create(req, res) {
     try {
-      const jwt = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(jwt);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
+      const payload = req.payload;
+      req.payload = undefined;
 
       const isAuth = await isAuthenticUser(tenantModel, payload);
 
@@ -143,14 +135,8 @@ export default class RentController {
 
   static async delete_(req, res) {
     try {
-      const jwt = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(jwt);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
+      const payload = req.payload;
+      req.payload = undefined;
 
       const isAuth = await isAuthenticUser(adminModel, payload);
 

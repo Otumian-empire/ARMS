@@ -162,14 +162,8 @@ export default class TenantController {
 
   static async update(req, res) {
     try {
-      const jwt = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(jwt);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
+      const payload = req.payload;
+      req.payload = undefined;
 
       const isAuth = await isAuthenticUser(tenantModel, payload);
 
@@ -227,14 +221,8 @@ export default class TenantController {
 
   static async delete_(req, res) {
     try {
-      const jwt = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(jwt);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
+      const payload = req.payload;
+      req.payload = undefined;
 
       const isAuth = await isAuthenticUser(tenantModel, payload);
 
