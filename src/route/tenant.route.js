@@ -46,7 +46,11 @@ route.put(
 // delete tenant data - admin privileges is needed
 route.delete(
   "/:id",
-  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schemas.idRequestParams, "params")],
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    joiMiddleware(schemas.idRequestParams, "params")
+  ],
   tenantController.delete_
 );
 

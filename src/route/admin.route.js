@@ -9,7 +9,11 @@ const route = Router();
 // fetch an admin
 route.get(
   "/:id",
-  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schema.idRequestParams, "params")],
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    joiMiddleware(schema.idRequestParams, "params")
+  ],
   adminController.findById
 );
 

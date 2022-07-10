@@ -40,9 +40,9 @@ export default class Auth {
       return res.json({ success: false, message: REQUEST_TOKEN });
     }
 
-    req.payload = payload
+    req.payload = payload;
 
-    return next()
+    return next();
   }
 
   static async hasExpired(ait) {

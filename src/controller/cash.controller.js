@@ -83,13 +83,13 @@ export default class CashController {
         });
       }
 
-      const token = generateToken();
-
       const tenant = await tenantModel.findById(id);
 
       if (!tenant) {
         throw new Error(INVALID_CREDENTIALS);
       }
+
+      const token = generateToken();
 
       const cash = await cashModel.create({
         tenantId: tenant.id,

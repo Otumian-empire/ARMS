@@ -160,12 +160,10 @@ export default class RentController {
     } catch (error) {
       logger.error(error.message);
 
-      if (error) {
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      }
+      return res.json({
+        success: false,
+        message: error.message
+      });
     }
   }
 }

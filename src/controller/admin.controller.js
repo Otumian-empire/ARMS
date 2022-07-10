@@ -18,9 +18,8 @@ import { isAuthenticUser } from "../util/function.js";
 
 export default class AdminController {
   static async findById(req, res) {
-    const id = req.params.id;
-
     try {
+      const id = req.params.id;
       const payload = req.payload;
       req.payload = undefined;
 
@@ -49,7 +48,6 @@ export default class AdminController {
 
   static async create(req, res) {
     try {
-
       const { username, password, email } = req.body;
       const hashedPassword = await hash(password, rounds);
 
@@ -77,7 +75,6 @@ export default class AdminController {
   }
 
   static async login(req, res) {
-
     try {
       const { username, password } = req.body;
       const result = await adminModel.findOne({ username });
@@ -118,7 +115,6 @@ export default class AdminController {
     try {
       const id = req.params.id;
       const email = req.body.email;
-
       const token = req.token;
       req.token = undefined;
 
@@ -166,7 +162,6 @@ export default class AdminController {
   }
 
   static async delete_(req, res) {
-
     try {
       const id = req.params.id;
       const token = req.token;
