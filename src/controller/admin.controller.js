@@ -18,6 +18,7 @@ import { isAuthenticUser } from "../util/function.js";
 
 export default class AdminController {
   static async findById(req, res) {
+    // TODO: Add caching here
     try {
       const id = req.params.id;
       const payload = req.payload;

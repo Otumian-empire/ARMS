@@ -19,6 +19,7 @@ import {
 
 export default class ApartmentController {
   static async find(req, res) {
+    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -43,6 +44,7 @@ export default class ApartmentController {
   }
 
   static async findById(req, res) {
+    // TODO: Add caching here
     try {
       const id = req.params.id;
       const apartment = await apartmentModel.findById(id).select("-__v");
@@ -108,8 +110,6 @@ export default class ApartmentController {
       });
     } catch (error) {
       logger.error(error.message);
-
-      console.log(error);
 
       return res.json({
         success: false,

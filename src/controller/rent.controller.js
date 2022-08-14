@@ -19,6 +19,7 @@ import { isAuthenticUser } from "../util/function.js";
 
 export default class RentController {
   static async find(req, res) {
+    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -43,6 +44,7 @@ export default class RentController {
   }
 
   static async findOneByRentId(req, res) {
+    // TODO: Add caching here
     try {
       const id = req.params.id;
       const rent = await rentModel.findById(id).select("-__v");
@@ -50,6 +52,7 @@ export default class RentController {
       if (!rent) {
         throw new Error(NOT_FOUND);
       }
+
       return res.json(rent);
     } catch (error) {
       logger.error(error.message);
@@ -83,6 +86,7 @@ export default class RentController {
       }
 
       const apartment = await apartmentModel.findById(apartmentId);
+
       if (!apartment) {
         throw new Error(INVALID_CREDENTIALS);
       }

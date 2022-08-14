@@ -11,6 +11,7 @@ import { generateToken, isAuthenticUser } from "../util/function.js";
 
 export default class CashController {
   static async find(req, res) {
+    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -36,6 +37,7 @@ export default class CashController {
   }
 
   static async findByTenantId(req, res) {
+    // TODO: Add caching here
     try {
       const id = req.params.id;
 

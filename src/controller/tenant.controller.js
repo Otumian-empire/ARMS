@@ -17,6 +17,7 @@ import { isAuthenticUser } from "../util/function.js";
 
 export default class TenantController {
   static async find(req, res) {
+    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -45,6 +46,7 @@ export default class TenantController {
   }
 
   static async findById(req, res) {
+    // TODO: Add caching here
     try {
       const id = req.params.id;
 
@@ -233,9 +235,11 @@ export default class TenantController {
       const id = req.params.id;
 
       const deletedTenant = await tenantModel.findByIdAndRemove(id);
+
       if (!deletedTenant) {
         throw new Error(INVALID_CREDENTIALS);
       }
+
       return res.json({
         success: true,
         message: DELETED_SUCCESSFULLY,
