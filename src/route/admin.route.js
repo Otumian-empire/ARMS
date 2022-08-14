@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Auth from "../config/auth.js";
+import { JWTAuthentication as Auth } from "../authentication/index.js";
 import { adminController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schema from "../util/joi.schema.js";

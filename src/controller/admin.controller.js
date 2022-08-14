@@ -1,5 +1,5 @@
 import { compare, hash } from "bcrypt";
-import Auth from "../config/auth.js";
+import { JWTAuthentication as Auth } from "../authentication/index.js";
 import logger from "../config/logger.js";
 import { adminModel } from "../model/index.js";
 import {
