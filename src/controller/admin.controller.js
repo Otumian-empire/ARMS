@@ -16,19 +16,18 @@ import {
 import { rounds } from "../util/app.constant.js";
 import { isAuthenticUser } from "../util/function.js";
 
+// `admin.auth.js`
+// there is a `req.id` that is part of the payload passed by the `admin.auth.js`
+// middleware. we can further use this req.id to check if the admin making the
+// request (user) and admin made the request on (resource) correspond
+// (user->resource). We can use this to restrict one admin from accessing
+// another's data
+
 export default class AdminController {
   static async findById(req, res) {
     // TODO: Add caching here
     try {
       const id = req.params.id;
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
 
       const admin = await adminModel.findById(id).select("-password -__v");
 
@@ -116,20 +115,6 @@ export default class AdminController {
     try {
       const id = req.params.id;
       const email = req.body.email;
-      const token = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(token);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
 
       const result = await adminModel.findById(id);
 
@@ -166,19 +151,6 @@ export default class AdminController {
     try {
       const id = req.params.id;
       const token = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(token);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
 
       const result = await adminModel.findByIdAndDelete(id);
 

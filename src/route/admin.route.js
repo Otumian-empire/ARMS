@@ -1,10 +1,20 @@
 import { Router } from "express";
-import { JWTAuthentication as Auth } from "../authentication/index.js";
+import {
+  AdminAuthentication,
+  JWTAuthentication as Auth
+} from "../authentication/index.js";
 import { adminController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schema from "../util/joi.schema.js";
 
 const route = Router();
+
+// create a admin - add admin data
+route.post(
+  "/",
+  joiMiddleware(schema.adminSignupRequestBody),
+  adminController.create
+);
 
 // fetch an admin
 route.get(
@@ -12,16 +22,10 @@ route.get(
   [
     Auth.hasBearerToken,
     Auth.hasExpiredToken,
+    AdminAuthentication,
     joiMiddleware(schema.idRequestParams, "params")
   ],
   adminController.findById
-);
-
-// create a admin - add admin data
-route.post(
-  "/",
-  joiMiddleware(schema.adminSignupRequestBody),
-  adminController.create
 );
 
 // login admin
@@ -36,6 +40,8 @@ route.put(
   "/:id",
   [
     Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
     joiMiddleware(schema.idRequestParams, "params"),
     joiMiddleware(schema.adminUpdateRequestBody)
   ],
@@ -45,7 +51,12 @@ route.put(
 // delete admin data - admin privileges is needed
 route.delete(
   "/:id",
-  [Auth.hasBearerToken, joiMiddleware(schema.idRequestParams, "params")],
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schema.idRequestParams, "params")
+  ],
   adminController.delete_
 );
 
