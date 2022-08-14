@@ -1,5 +1,5 @@
 import { adminModel as Admin } from "../model/index.js";
-import { FORBIDDEN } from "../util/api.message.js";
+import { UNAUTHORIZED } from "../util/api.message.js";
 
 export default async function AdminAuth(req, res, next) {
   try {
@@ -15,7 +15,7 @@ export default async function AdminAuth(req, res, next) {
     if (!isAuthenticUser) {
       return res.status(401).json({
         success: false,
-        message: FORBIDDEN
+        message: UNAUTHORIZED
       });
     }
 

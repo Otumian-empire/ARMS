@@ -1,5 +1,5 @@
 import logger from "../config/logger.js";
-import { adminModel, apartmentModel } from "../model/index.js";
+import { apartmentModel } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   APARTMENT_CREATED_SUCCESSFULLY,
@@ -11,7 +11,6 @@ import {
 } from "../util/api.message.js";
 import { PAGINATION } from "../util/app.constant.js";
 import {
-  isAuthenticUser,
   isValidPrice,
   isValidRoomNumber,
   pagination
@@ -66,15 +65,6 @@ export default class ApartmentController {
 
   static async create(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       let { roomNumber, description, price } = req.body;
 
       if (!isValidRoomNumber(roomNumber)) {
@@ -120,15 +110,6 @@ export default class ApartmentController {
 
   static async update(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const id = req.params.id;
       const { roomNumber, description, price } = req.body;
 
@@ -187,15 +168,6 @@ export default class ApartmentController {
 
   static async delete_(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const id = req.params.id;
 
       const result = await apartmentModel.findByIdAndDelete(id);
