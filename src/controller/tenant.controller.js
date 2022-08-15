@@ -5,6 +5,7 @@ import { tenantModel } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   DELETED_SUCCESSFULLY,
+  FORBIDDEN,
   INVALID_CREDENTIALS,
   KIN_IS_REQUIRED,
   LOGIN_SUCCESSFUL,
@@ -12,8 +13,8 @@ import {
   TENANT_CREATED_SUCCESSFULLY,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-import { rounds } from "../util/app.constant.js";
-import { isAuthenticUser } from "../util/function.js";
+import { PAGINATION, rounds } from "../util/app.constant.js";
+import { isAuthenticUser, pagination } from "../util/function.js";
 
 export default class TenantController {
   static async find(req, res) {

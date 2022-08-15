@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-
 import { FORBIDDEN, REQUEST_TOKEN } from "../util/api.message.js";
 import { JWT_SECRET, ONE_WEEK } from "../util/app.constant.js";
 

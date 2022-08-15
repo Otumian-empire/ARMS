@@ -1,6 +1,5 @@
 import logger from "../config/logger.js";
 import {
-  adminModel,
   apartmentModel,
   cashModel,
   rentModel,
@@ -10,12 +9,12 @@ import {
   AN_ERROR_OCCURRED,
   APARTMENT_IS_OCCUPIED,
   DELETED_SUCCESSFULLY,
-  FORBIDDEN,
   INVALID_CREDENTIALS,
   NOT_FOUND,
   RENT_ADDED_SUCCESSFULLY
 } from "../util/api.message.js";
-import { isAuthenticUser } from "../util/function.js";
+import { PAGINATION } from "../util/app.constant.js";
+import { pagination } from "../util/function.js";
 
 export default class RentController {
   static async find(req, res) {

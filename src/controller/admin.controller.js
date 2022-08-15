@@ -6,15 +6,12 @@ import {
   ADMIN_CREATED_SUCCESSFULLY,
   AN_ERROR_OCCURRED,
   DELETED_SUCCESSFULLY,
-  FORBIDDEN,
   INVALID_CREDENTIALS,
   LOGIN_SUCCESSFUL,
   NOT_FOUND,
-  REQUEST_TOKEN,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { rounds } from "../util/app.constant.js";
-import { isAuthenticUser } from "../util/function.js";
 
 // `admin.auth.js`
 // there is a `req.id` that is part of the payload passed by the `admin.auth.js`
@@ -150,7 +147,6 @@ export default class AdminController {
   static async delete_(req, res) {
     try {
       const id = req.params.id;
-      const token = req.token;
 
       const result = await adminModel.findByIdAndDelete(id);
 
