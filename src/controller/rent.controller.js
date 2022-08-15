@@ -66,15 +66,6 @@ export default class RentController {
 
   static async create(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(tenantModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const id = req.params.id;
       const { apartmentId, cashId } = req.body;
 
@@ -83,12 +74,6 @@ export default class RentController {
           success: false,
           message: INVALID_CREDENTIALS
         });
-      }
-
-      const apartment = await apartmentModel.findById(apartmentId);
-
-      if (!apartment) {
-        throw new Error(INVALID_CREDENTIALS);
       }
 
       const tenant = await tenantModel.findById(id);
@@ -101,6 +86,12 @@ export default class RentController {
 
       if (!cash) {
         throw new Error(NOT_FOUND);
+      }
+
+      const apartment = await apartmentModel.findById(apartmentId);
+
+      if (!apartment) {
+        throw new Error(INVALID_CREDENTIALS);
       }
 
       const isOccupied = await rentModel.findOne({ apartmentId });
@@ -139,15 +130,6 @@ export default class RentController {
 
   static async delete_(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const id = req.params.id;
 
       const result = await rentModel.findByIdAndDelete(id);

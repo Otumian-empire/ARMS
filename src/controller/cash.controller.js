@@ -3,7 +3,8 @@ import { cashModel, tenantModel } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   CASH_ADDED_SUCCESSFULLY,
-  DELETED_SUCCESSFULLY, INVALID_CREDENTIALS
+  DELETED_SUCCESSFULLY,
+  INVALID_CREDENTIALS
 } from "../util/api.message.js";
 import { generateToken } from "../util/function.js";
 
