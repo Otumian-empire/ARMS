@@ -1,5 +1,6 @@
 import { compare, hash } from "bcrypt";
 import { JWTAuthentication as Auth } from "../authentication/index.js";
+import { Cache } from "../caching/index.js";
 import logger from "../config/logger.js";
 import { tenantModel } from "../model/index.js";
 import {
@@ -18,7 +19,6 @@ import { isAuthenticUser, pagination } from "../util/function.js";
 
 export default class TenantController {
   static async find(req, res) {
-    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -34,6 +34,9 @@ export default class TenantController {
       if (!tenants) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `TENANT:${page}:${pageSize}`;
+      Cache.setEx(redisKey, 3600, JSON.stringify(tenants));
 
       return res.json(tenants);
     } catch (error) {
@@ -56,6 +59,9 @@ export default class TenantController {
       if (!tenant) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `TENANT:${id}`;
+      Cache.setNX(redisKey, 3600, JSON.stringify(tenant));
 
       return res.json(tenant);
     } catch (error) {

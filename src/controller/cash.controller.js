@@ -11,7 +11,6 @@ import { generateToken, pagination } from "../util/function.js";
 
 export default class CashController {
   static async find(req, res) {
-    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -23,6 +22,9 @@ export default class CashController {
         .skip(skip)
         .limit(limit)
         .select("-__v");
+
+      const redisKey = `CASH:${page}:${pageSize}`;
+      Cache.setEx(redisKey, 3600, JSON.stringify(cashes));
 
       return res.json(cashes);
     } catch (error) {
@@ -36,7 +38,6 @@ export default class CashController {
   }
 
   static async findByTenantId(req, res) {
-    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -44,13 +45,16 @@ export default class CashController {
       const { limit, skip } = pagination(page, pageSize);
       const id = req.params.id;
 
-      const results = await cashModel
+      const cashes = await cashModel
         .find({ tenantId: id })
         .skip(skip)
         .limit(limit)
         .select("-__v");
 
-      return res.json(results);
+      const redisKey = `CASH:${id}:${page}:${pageSize}`;
+      Cache.setEx(redisKey, 3600, JSON.stringify(cashes));
+
+      return res.json(cashes);
     } catch (error) {
       logger.error(error.message);
 

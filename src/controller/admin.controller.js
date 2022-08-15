@@ -1,5 +1,6 @@
 import { compare, hash } from "bcrypt";
 import { JWTAuthentication as Auth } from "../authentication/index.js";
+import { Cache } from "../caching/index.js";
 import logger from "../config/logger.js";
 import { adminModel } from "../model/index.js";
 import {
@@ -22,7 +23,6 @@ import { rounds } from "../util/app.constant.js";
 
 export default class AdminController {
   static async findById(req, res) {
-    // TODO: Add caching here
     try {
       const id = req.params.id;
 
@@ -31,6 +31,9 @@ export default class AdminController {
       if (!admin) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `ADMIN_${id}`;
+      await Cache.setEx(redisKey, 3600, JSON.stringify(admin));
 
       return res.json(admin);
     } catch (error) {

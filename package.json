@@ -17,7 +17,13 @@
     "system",
     "management",
     "tenant",
-    "room"
+    "room",
+    "mongodb",
+    "mongoose",
+    "js",
+    "es6",
+    "redis",
+    "caching"
   ],
   "type": "module",
   "author": "Otumian-empire@github.com",

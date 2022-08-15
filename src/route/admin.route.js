@@ -3,6 +3,7 @@ import {
   AdminAuthentication,
   JWTAuthentication as Auth
 } from "../authentication/index.js";
+import { AdminCaching } from "../caching/index.js";
 import { adminController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schema from "../util/joi.schema.js";
@@ -23,7 +24,8 @@ route.get(
     Auth.hasBearerToken,
     Auth.hasExpiredToken,
     AdminAuthentication,
-    joiMiddleware(schema.idRequestParams, "params")
+    joiMiddleware(schema.idRequestParams, "params"),
+    AdminCaching.findById
   ],
   adminController.findById
 );

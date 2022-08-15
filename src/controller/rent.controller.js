@@ -18,7 +18,6 @@ import { pagination } from "../util/function.js";
 
 export default class RentController {
   static async find(req, res) {
-    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -30,6 +29,9 @@ export default class RentController {
         .skip(skip)
         .limit(limit)
         .select("-__v");
+
+      const redisKey = `CASH:${page}:${pageSize}`;
+      Cache.setEx(redisKey, 3600, JSON.stringify(rents));
 
       return res.json(rents);
     } catch (error) {
@@ -43,7 +45,6 @@ export default class RentController {
   }
 
   static async findOneByRentId(req, res) {
-    // TODO: Add caching here
     try {
       const id = req.params.id;
       const rent = await rentModel.findById(id).select("-__v");
@@ -51,6 +52,9 @@ export default class RentController {
       if (!rent) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `RENT:${id}`;
+      Cache.setEx(redisKey, 3600, JSON.stringify(rent));
 
       return res.json(rent);
     } catch (error) {

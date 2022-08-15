@@ -3,6 +3,7 @@ import {
   AdminAuthentication,
   JWTAuthentication as Auth
 } from "../authentication/index.js";
+import { ApartmentCaching } from "../caching/index.js";
 import { apartmentController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
@@ -10,12 +11,27 @@ import schemas from "../util/joi.schema.js";
 const route = Router();
 
 // fetch all apartments
-route.get("/", apartmentController.find);
+route.get(
+  "/",
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    ApartmentCaching.find
+  ],
+  apartmentController.find
+);
 
 // fetch an apartment
 route.get(
   "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.idRequestParams, "params"),
+    ApartmentCaching.findById
+  ],
   apartmentController.findById
 );
 

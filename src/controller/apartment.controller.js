@@ -1,3 +1,4 @@
+import { Cache } from "../caching/index.js";
 import logger from "../config/logger.js";
 import { apartmentModel } from "../model/index.js";
 import {
@@ -18,7 +19,6 @@ import {
 
 export default class ApartmentController {
   static async find(req, res) {
-    // TODO: Add caching here
     try {
       const page = parseInt(req.query.page) || PAGINATION.page;
       const pageSize = parseInt(req.query.pageSize) || PAGINATION.pageSize;
@@ -30,6 +30,9 @@ export default class ApartmentController {
         .skip(skip)
         .limit(limit)
         .select("-__v");
+
+      const redisKey = `APARTMENT:${page}:${pageSize}`;
+      Cache.setEx(redisKey, 3600, JSON.stringify(apartments));
 
       return res.json(apartments);
     } catch (error) {
@@ -43,7 +46,6 @@ export default class ApartmentController {
   }
 
   static async findById(req, res) {
-    // TODO: Add caching here
     try {
       const id = req.params.id;
       const apartment = await apartmentModel.findById(id).select("-__v");
@@ -51,6 +53,9 @@ export default class ApartmentController {
       if (!apartment) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `APARTMENT:${id}`;
+      Cache.setEx(redisKey, 3600, JSON.stringify(apartment));
 
       return res.json(apartment);
     } catch (error) {
