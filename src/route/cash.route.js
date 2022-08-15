@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { JWTAuthentication as Auth } from "../authentication/index.js";
+import {
+  AdminAuthentication,
+  JWTAuthentication as Auth
+} from "../authentication/index.js";
 import { cashController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
@@ -9,10 +12,16 @@ const route = Router();
 route.get("/", cashController.find);
 
 // TODO: think about adding an endpoint for reading using the cash's ID
+
 // fetch an cash
 route.get(
   "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.idRequestParams, "params")
+  ],
   cashController.findByTenantId
 );
 
@@ -22,6 +31,7 @@ route.post(
   [
     Auth.hasBearerToken,
     Auth.hasExpiredToken,
+    AdminAuthentication,
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.cashCreateRequestBody)
   ],
@@ -34,6 +44,7 @@ route.delete(
   [
     Auth.hasBearerToken,
     Auth.hasExpiredToken,
+    AdminAuthentication,
     joiMiddleware(schemas.idRequestParams, "params")
   ],
   cashController.delete_
