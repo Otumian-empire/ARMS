@@ -1,5 +1,9 @@
 import { Router } from "express";
-import Auth from "../config/auth.js";
+import {
+  AdminAuthentication,
+  JWTAuthentication as Auth
+} from "../authentication/index.js";
+import { ApartmentCaching } from "../caching/index.js";
 import { apartmentController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
@@ -7,19 +11,39 @@ import schemas from "../util/joi.schema.js";
 const route = Router();
 
 // fetch all apartments
-route.get("/", apartmentController.find);
+route.get(
+  "/",
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    ApartmentCaching.find
+  ],
+  apartmentController.find
+);
 
 // fetch an apartment
 route.get(
   "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.idRequestParams, "params"),
+    ApartmentCaching.findById
+  ],
   apartmentController.findById
 );
 
 // create a apartment - add apartment data
 route.post(
   "/",
-  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schemas.apartmentCreateRequestBody)],
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.apartmentCreateRequestBody)
+  ],
   apartmentController.create
 );
 
@@ -29,6 +53,7 @@ route.put(
   [
     Auth.hasBearerToken,
     Auth.hasExpiredToken,
+    AdminAuthentication,
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.apartmentUpdateRequestBody)
   ],
@@ -38,7 +63,12 @@ route.put(
 // delete an apartment data - admin privileges is needed
 route.delete(
   "/:id",
-  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schemas.idRequestParams, "params")],
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.idRequestParams, "params")
+  ],
   apartmentController.delete_
 );
 

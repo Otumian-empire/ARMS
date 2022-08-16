@@ -1,6 +1,6 @@
+import { Cache } from "../caching/index.js";
 import logger from "../config/logger.js";
 import {
-  adminModel,
   apartmentModel,
   cashModel,
   rentModel,
@@ -10,12 +10,12 @@ import {
   AN_ERROR_OCCURRED,
   APARTMENT_IS_OCCUPIED,
   DELETED_SUCCESSFULLY,
-  FORBIDDEN,
   INVALID_CREDENTIALS,
   NOT_FOUND,
   RENT_ADDED_SUCCESSFULLY
 } from "../util/api.message.js";
-import { isAuthenticUser } from "../util/function.js";
+import { PAGINATION, REDIS_TTL } from "../util/app.constant.js";
+import { pagination } from "../util/function.js";
 
 export default class RentController {
   static async find(req, res) {
@@ -30,6 +30,9 @@ export default class RentController {
         .skip(skip)
         .limit(limit)
         .select("-__v");
+
+      const redisKey = `CASH:${page}:${pageSize}`;
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(rents));
 
       return res.json(rents);
     } catch (error) {
@@ -50,6 +53,10 @@ export default class RentController {
       if (!rent) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `RENT:${id}`;
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(rent));
+
       return res.json(rent);
     } catch (error) {
       logger.error(error.message);
@@ -63,15 +70,6 @@ export default class RentController {
 
   static async create(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(tenantModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const id = req.params.id;
       const { apartmentId, cashId } = req.body;
 
@@ -80,11 +78,6 @@ export default class RentController {
           success: false,
           message: INVALID_CREDENTIALS
         });
-      }
-
-      const apartment = await apartmentModel.findById(apartmentId);
-      if (!apartment) {
-        throw new Error(INVALID_CREDENTIALS);
       }
 
       const tenant = await tenantModel.findById(id);
@@ -97,6 +90,12 @@ export default class RentController {
 
       if (!cash) {
         throw new Error(NOT_FOUND);
+      }
+
+      const apartment = await apartmentModel.findById(apartmentId);
+
+      if (!apartment) {
+        throw new Error(INVALID_CREDENTIALS);
       }
 
       const isOccupied = await rentModel.findOne({ apartmentId });
@@ -135,15 +134,6 @@ export default class RentController {
 
   static async delete_(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const id = req.params.id;
 
       const result = await rentModel.findByIdAndDelete(id);
@@ -160,12 +150,10 @@ export default class RentController {
     } catch (error) {
       logger.error(error.message);
 
-      if (error) {
-        return res.json({
-          success: false,
-          message: error.message
-        });
-      }
+      return res.json({
+        success: false,
+        message: error.message
+      });
     }
   }
 }

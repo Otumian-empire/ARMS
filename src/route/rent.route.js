@@ -1,5 +1,9 @@
 import { Router } from "express";
-import Auth from "../config/auth.js";
+import {
+  AdminAuthentication,
+  JWTAuthentication as Auth
+} from "../authentication/index.js";
+import { RentCaching } from "../caching/index.js";
 import { rentController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
@@ -7,12 +11,27 @@ import schemas from "../util/joi.schema.js";
 const route = Router();
 
 // fetch all Rents
-route.get("/", rentController.find);
+route.get(
+  "/",
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    RentCaching.find
+  ],
+  rentController.find
+);
 
 // fetch a Rent by Rent id
 route.get(
   "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.idRequestParams, "params"),
+    RentCaching.findOneByRentId
+  ],
   rentController.findOneByRentId
 );
 
@@ -22,6 +41,7 @@ route.post(
   [
     Auth.hasBearerToken,
     Auth.hasExpiredToken,
+    AdminAuthentication,
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.rentCreateRequestBody)
   ],
@@ -31,7 +51,12 @@ route.post(
 // delete Rent data - admin privileges is needed
 route.delete(
   "/:id",
-  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schemas.idRequestParams, "params")],
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.idRequestParams, "params")
+  ],
   rentController.delete_
 );
 

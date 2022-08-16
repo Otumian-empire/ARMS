@@ -1,5 +1,9 @@
 import { Router } from "express";
-import Auth from "../config/auth.js";
+import {
+  AdminAuthentication,
+  JWTAuthentication as Auth
+} from "../authentication/index.js";
+import { TenantCaching } from "../caching/index.js";
 import { tenantController } from "../controller/index.js";
 import joiMiddleware from "../util/joi.middleware.js";
 import schemas from "../util/joi.schema.js";
@@ -7,19 +11,37 @@ import schemas from "../util/joi.schema.js";
 const route = Router();
 
 // fetch all tenants
-route.get("/", tenantController.find);
+route.get(
+  "/",
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    TenantCaching.find
+  ],
+  tenantController.find
+);
 
 // fetch a tenant
 route.get(
   "/:id",
-  joiMiddleware(schemas.idRequestParams, "params"),
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    joiMiddleware(schemas.idRequestParams, "params")
+  ],
   tenantController.findById
 );
 
 // create a tenant - add tenant data
 route.post(
   "/",
-  joiMiddleware(schemas.tenantCreateRequestBody),
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.tenantCreateRequestBody)
+  ],
   tenantController.create
 );
 
@@ -37,6 +59,7 @@ route.put(
   [
     Auth.hasBearerToken,
     Auth.hasExpiredToken,
+    AdminAuthentication,
     joiMiddleware(schemas.idRequestParams, "params"),
     joiMiddleware(schemas.tenantUpdateRequestBody)
   ],
@@ -46,7 +69,12 @@ route.put(
 // delete tenant data - admin privileges is needed
 route.delete(
   "/:id",
-  [Auth.hasBearerToken, Auth.hasExpiredToken, joiMiddleware(schemas.idRequestParams, "params")],
+  [
+    Auth.hasBearerToken,
+    Auth.hasExpiredToken,
+    AdminAuthentication,
+    joiMiddleware(schemas.idRequestParams, "params")
+  ],
   tenantController.delete_
 );
 

@@ -1,40 +1,39 @@
 import { compare, hash } from "bcrypt";
-import Auth from "../config/auth.js";
+import { JWTAuthentication as Auth } from "../authentication/index.js";
+import { Cache } from "../caching/index.js";
 import logger from "../config/logger.js";
 import { adminModel } from "../model/index.js";
 import {
   ADMIN_CREATED_SUCCESSFULLY,
   AN_ERROR_OCCURRED,
   DELETED_SUCCESSFULLY,
-  FORBIDDEN,
   INVALID_CREDENTIALS,
   LOGIN_SUCCESSFUL,
   NOT_FOUND,
-  REQUEST_TOKEN,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-import { rounds } from "../util/app.constant.js";
-import { isAuthenticUser } from "../util/function.js";
+import { REDIS_TTL, rounds } from "../util/app.constant.js";
+
+// `admin.auth.js`
+// there is a `req.id` that is part of the payload passed by the `admin.auth.js`
+// middleware. we can further use this req.id to check if the admin making the
+// request (user) and admin made the request on (resource) correspond
+// (user->resource). We can use this to restrict one admin from accessing
+// another's data
 
 export default class AdminController {
   static async findById(req, res) {
-    const id = req.params.id;
-
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
+      const id = req.params.id;
 
       const admin = await adminModel.findById(id).select("-password -__v");
 
       if (!admin) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `ADMIN:${id}`;
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(admin));
 
       return res.json(admin);
     } catch (error) {
@@ -49,7 +48,6 @@ export default class AdminController {
 
   static async create(req, res) {
     try {
-
       const { username, password, email } = req.body;
       const hashedPassword = await hash(password, rounds);
 
@@ -77,7 +75,6 @@ export default class AdminController {
   }
 
   static async login(req, res) {
-
     try {
       const { username, password } = req.body;
       const result = await adminModel.findOne({ username });
@@ -119,21 +116,6 @@ export default class AdminController {
       const id = req.params.id;
       const email = req.body.email;
 
-      const token = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(token);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const result = await adminModel.findById(id);
 
       if (!result) {
@@ -166,23 +148,8 @@ export default class AdminController {
   }
 
   static async delete_(req, res) {
-
     try {
       const id = req.params.id;
-      const token = req.token;
-      req.token = undefined;
-
-      const payload = await Auth.verifyJWT(token);
-
-      if (payload.hasExpired) {
-        throw new Error(REQUEST_TOKEN);
-      }
-
-      const isAuth = await isAuthenticUser(adminModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
 
       const result = await adminModel.findByIdAndDelete(id);
 

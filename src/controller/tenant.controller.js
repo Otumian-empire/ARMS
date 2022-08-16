@@ -1,10 +1,12 @@
 import { compare, hash } from "bcrypt";
-import Auth from "../config/auth.js";
+import { JWTAuthentication as Auth } from "../authentication/index.js";
+import { Cache } from "../caching/index.js";
 import logger from "../config/logger.js";
 import { tenantModel } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   DELETED_SUCCESSFULLY,
+  FORBIDDEN,
   INVALID_CREDENTIALS,
   KIN_IS_REQUIRED,
   LOGIN_SUCCESSFUL,
@@ -12,8 +14,8 @@ import {
   TENANT_CREATED_SUCCESSFULLY,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-import { rounds } from "../util/app.constant.js";
-import { isAuthenticUser } from "../util/function.js";
+import { PAGINATION, REDIS_TTL, rounds } from "../util/app.constant.js";
+import { isAuthenticUser, pagination } from "../util/function.js";
 
 export default class TenantController {
   static async find(req, res) {
@@ -32,6 +34,9 @@ export default class TenantController {
       if (!tenants) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `TENANT:${page}:${pageSize}`;
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(tenants));
 
       return res.json(tenants);
     } catch (error) {
@@ -53,6 +58,9 @@ export default class TenantController {
       if (!tenant) {
         throw new Error(NOT_FOUND);
       }
+
+      const redisKey = `TENANT:${id}`;
+      await Cache.setNX(redisKey, REDIS_TTL, JSON.stringify(tenant));
 
       return res.json(tenant);
     } catch (error) {
@@ -162,14 +170,6 @@ export default class TenantController {
 
   static async update(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(tenantModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
 
       const { email, phone, kin } = req.body;
       const id = req.params.id;
@@ -221,21 +221,14 @@ export default class TenantController {
 
   static async delete_(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(tenantModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const id = req.params.id;
 
       const deletedTenant = await tenantModel.findByIdAndRemove(id);
+
       if (!deletedTenant) {
         throw new Error(INVALID_CREDENTIALS);
       }
+
       return res.json({
         success: true,
         message: DELETED_SUCCESSFULLY,

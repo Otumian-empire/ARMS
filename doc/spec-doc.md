@@ -67,3 +67,4 @@ Create a `.env` file in the root folder and add the following data:
 - REFRESH_JWT_SECRET=''
 - SALT_ROUNDS=''
 - MONGODB_URI=''
+- REDIS_URI=''
