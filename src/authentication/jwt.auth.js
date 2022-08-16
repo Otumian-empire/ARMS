@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
 import { FORBIDDEN, REQUEST_TOKEN } from "../util/api.message.js";
-import { JWT_SECRET, ONE_WEEK } from "../util/app.constant.js";
+import { JWT_SECRET, JWT_TTL } from "../util/app.constant.js";
 
 export default class Auth {
   static async generateJWT(payload = {}) {
-    const JWT_IAT = Date.now() + ONE_WEEK;
+    const JWT_IAT = Date.now() + JWT_TTL;
     const jwtToken = jwt.sign({ ...payload, iat: JWT_IAT }, JWT_SECRET);
 
     return jwtToken;

@@ -1,0 +1,834 @@
+{
+	"info": {
+		"_postman_id": "55b87467-1348-4fc9-98dd-669dc919bba6",
+		"name": "ARMS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "adminPassword123",
+									"type": "default"
+								},
+								{
+									"key": "email",
+									"value": "admin@gmail.com",
+									"type": "default"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/admin",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "adminPassword123",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "admin@gmail.com",
+									"type": "text",
+									"disabled": true
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/admin/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findOne by admin ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZmE5NDlmOGZhYTY2NWI3OGY1MWNjYyIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTY2MDYxNzg3NDAwM30.hU9DtRzb2l722bxxEbHKpsIpml120w8dE61UrpMyaVU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/admin/62fa949f8faa665b78f51ccc",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"62fa949f8faa665b78f51ccc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZmE5NDlmOGZhYTY2NWI3OGY1MWNjYyIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluMTIwQGdtYWlsLmNvbSIsImlhdCI6MTY2MDYyNTIxNDE5Nn0.cR4chdOA097nHbCMFR3hywP6_bHq7pXHOpynx2X3QNg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "user123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "password123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "admin120@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/admin/62fa949f8faa665b78f51ccc",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"62fa949f8faa665b78f51ccc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZmE5NDlmOGZhYTY2NWI3OGY1MWNjYyIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluMTIwQGdtYWlsLmNvbSIsImlhdCI6MTY2MDYyNTIxNDE5Nn0.cR4chdOA097nHbCMFR3hywP6_bHq7pXHOpynx2X3QNg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "user123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "password123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "user123update@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/admin/62fa949f8faa665b78f51ccc",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"admin",
+								"62fa949f8faa665b78f51ccc"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Apartment",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZmIyMGIxMmZjYThhOGIyNDBjOWFiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTY2MDYyNzQxNTg5OH0.2Fwuox1WdGvKwvTtIzZP275pOeVkoLOQEbGsJQjSI3M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "roomNumber",
+									"value": "R0044",
+									"type": "default"
+								},
+								{
+									"key": "description",
+									"value": "bluie flash room",
+									"type": "default"
+								},
+								{
+									"key": "price",
+									"value": "3000",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/apartment",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"apartment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZmIyMGIxMmZjYThhOGIyNDBjOWFiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTY2MDYyNzQxNTg5OH0.2Fwuox1WdGvKwvTtIzZP275pOeVkoLOQEbGsJQjSI3M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/apartment",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"apartment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZmIyMGIxMmZjYThhOGIyNDBjOWFiYiIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTY2MDYyNzU1NzgwN30.kL6bfzrO8-uy8bHsXbCNrD7hathMaIwqMQmMJ8e31Uk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/apartment/6296809401ff753597abf94f",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"apartment",
+								"6296809401ff753597abf94f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzFlNTJkMGYyZWQ0MzUyNzFmM2RlOCIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTY1Njg3NjA4MzIwMX0.3tvaEp0tCJS7s_egL_FhC8m6nbcnk7flwQZC9DAlbDI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "roomNumber",
+									"value": "R001",
+									"type": "default",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "This room is the first room on the ground floor",
+									"type": "default",
+									"disabled": true
+								},
+								{
+									"key": "price",
+									"value": "4000",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/apartment/62c1e690c1b4792f490b5697",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"apartment",
+								"62c1e690c1b4792f490b5697"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzFlNTJkMGYyZWQ0MzUyNzFmM2RlOCIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsImlhdCI6MTY1Njg3NjA4MzIwMX0.3tvaEp0tCJS7s_egL_FhC8m6nbcnk7flwQZC9DAlbDI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "roomNumber",
+									"value": "R001",
+									"type": "default"
+								},
+								{
+									"key": "description",
+									"value": "This room is the first room on the ground floor",
+									"type": "default"
+								},
+								{
+									"key": "price",
+									"value": "3000",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/apartment/62c1e690c1b4792f490b5697",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"apartment",
+								"62c1e690c1b4792f490b5697"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tenant",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"John Michael\",\n  \"username\": \"tenant125\",\n  \"password\": \"Tenant125\",\n  \"email\": \"tenant125@gmail.com\",\n  \"phone\": \"+233267000005\",\n  \"dob\": \"02-01-2002\",\n  \"prevResidenceAddress\": \"2 Accra\",\n  \"kin\": {\n    \"fullName\": \"Uncle Brown John Doe\",\n    \"email\": \"tenant124kin@gmail.com\",\n    \"phone\": \"+233267000001\",\n    \"residenceAddress\": \"24 Accra\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tenant",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tenant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"tenant125\",\n  \"password\": \"Tenant125\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tenant/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tenant",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/tenant",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tenant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findbyId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/tenant/6296ac99a6274210c2dbbe70",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tenant",
+								"6296ac99a6274210c2dbbe70"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzFlZjY3YmZmNmZhZTNmYzZjOGQyMiIsInVzZXJuYW1lIjoidGVuYW50MTI1IiwiZW1haWwiOiJ0ZW5hbnQxMjVAZ21haWwuY29tIiwiaWF0IjoxNjU2ODc3ODY0NTI0fQ.p5yKtBIX6Qqx6ODS-y0IVKKBCYTLHGTxBAMl4Leqxkc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kin\": {\n    \"email\": \"tenant124KinUP@gmail.com\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tenant/62c1ef67bff6fae3fc6c8d22",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tenant",
+								"62c1ef67bff6fae3fc6c8d22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzFlZjY3YmZmNmZhZTNmYzZjOGQyMiIsInVzZXJuYW1lIjoidGVuYW50MTI1IiwiZW1haWwiOiJ0ZW5hbnQxMjVAZ21haWwuY29tIiwiaWF0IjoxNjU2ODc3ODY0NTI0fQ.p5yKtBIX6Qqx6ODS-y0IVKKBCYTLHGTxBAMl4Leqxkc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/tenant/62c1ef67bff6fae3fc6c8d22",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tenant",
+								"62c1ef67bff6fae3fc6c8d22"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cash",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "amount",
+									"value": "12300",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/cash/6296ad78a6274210c2dbbe78",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"cash",
+								"6296ad78a6274210c2dbbe78"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "amount",
+									"value": "1200",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/cash",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"cash"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by tenant id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "amount",
+									"value": "1200",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/cash/6296ad78a6274210c2dbbe78",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"cash",
+								"6296ad78a6274210c2dbbe78"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/cash/6296ad95a6274210c2dbbe7c",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"cash",
+								"6296ad95a6274210c2dbbe7c"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rent",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYzFmNTA1YThjMzdkMTBhNWMzNzE5OCIsInVzZXJuYW1lIjoidGVuYW50MTI1IiwiZW1haWwiOiJ0ZW5hbnQxMjVAZ21haWwuY29tIiwiaWF0IjoxNjU2ODc4NTk4MDMxfQ.LKQNUDIj1HEENGVAH0_ck1bvaAihJyxafsfiKC4xclI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "apartmentId",
+									"value": "6296809401ff753597abf94f",
+									"type": "default"
+								},
+								{
+									"key": "cashId",
+									"value": "6296ad97a6274210c2dbbe7f",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/rent/62c1f505a8c37d10a5c37198",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"rent",
+								"62c1f505a8c37d10a5c37198"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/rent",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"rent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find by rent Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/rent/6296bc9a99d9b546d9384285",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"rent",
+								"6296bc9a99d9b546d9384285"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/rent/6296bc9a99d9b546d9384285",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"rent",
+								"6296bc9a99d9b546d9384285"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "bearerToken",
+			"value": "C"
+		}
+	]
+}

@@ -14,7 +14,7 @@ import {
   TENANT_CREATED_SUCCESSFULLY,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-import { PAGINATION, rounds } from "../util/app.constant.js";
+import { PAGINATION, REDIS_TTL, rounds } from "../util/app.constant.js";
 import { isAuthenticUser, pagination } from "../util/function.js";
 
 export default class TenantController {
@@ -36,7 +36,7 @@ export default class TenantController {
       }
 
       const redisKey = `TENANT:${page}:${pageSize}`;
-      Cache.setEx(redisKey, 3600, JSON.stringify(tenants));
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(tenants));
 
       return res.json(tenants);
     } catch (error) {
@@ -50,7 +50,6 @@ export default class TenantController {
   }
 
   static async findById(req, res) {
-    // TODO: Add caching here
     try {
       const id = req.params.id;
 
@@ -61,7 +60,7 @@ export default class TenantController {
       }
 
       const redisKey = `TENANT:${id}`;
-      Cache.setNX(redisKey, 3600, JSON.stringify(tenant));
+      await Cache.setNX(redisKey, REDIS_TTL, JSON.stringify(tenant));
 
       return res.json(tenant);
     } catch (error) {
@@ -171,14 +170,6 @@ export default class TenantController {
 
   static async update(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(tenantModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
 
       const { email, phone, kin } = req.body;
       const id = req.params.id;
@@ -230,15 +221,6 @@ export default class TenantController {
 
   static async delete_(req, res) {
     try {
-      const payload = req.payload;
-      req.payload = undefined;
-
-      const isAuth = await isAuthenticUser(tenantModel, payload);
-
-      if (!isAuth) {
-        return res.status(403).json({ success: false, message: FORBIDDEN });
-      }
-
       const id = req.params.id;
 
       const deletedTenant = await tenantModel.findByIdAndRemove(id);

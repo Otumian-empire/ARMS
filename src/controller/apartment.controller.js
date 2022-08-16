@@ -10,7 +10,7 @@ import {
   NOT_FOUND,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-import { PAGINATION } from "../util/app.constant.js";
+import { PAGINATION, REDIS_TTL } from "../util/app.constant.js";
 import {
   isValidPrice,
   isValidRoomNumber,
@@ -32,7 +32,7 @@ export default class ApartmentController {
         .select("-__v");
 
       const redisKey = `APARTMENT:${page}:${pageSize}`;
-      Cache.setEx(redisKey, 3600, JSON.stringify(apartments));
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(apartments));
 
       return res.json(apartments);
     } catch (error) {
@@ -55,7 +55,7 @@ export default class ApartmentController {
       }
 
       const redisKey = `APARTMENT:${id}`;
-      Cache.setEx(redisKey, 3600, JSON.stringify(apartment));
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(apartment));
 
       return res.json(apartment);
     } catch (error) {

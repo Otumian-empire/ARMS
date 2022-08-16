@@ -12,7 +12,7 @@ import {
   NOT_FOUND,
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
-import { rounds } from "../util/app.constant.js";
+import { REDIS_TTL, rounds } from "../util/app.constant.js";
 
 // `admin.auth.js`
 // there is a `req.id` that is part of the payload passed by the `admin.auth.js`
@@ -33,7 +33,7 @@ export default class AdminController {
       }
 
       const redisKey = `ADMIN:${id}`;
-      await Cache.setEx(redisKey, 3600, JSON.stringify(admin));
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(admin));
 
       return res.json(admin);
     } catch (error) {

@@ -1,3 +1,4 @@
+import { Cache } from "../caching/index.js";
 import logger from "../config/logger.js";
 import {
   apartmentModel,
@@ -13,7 +14,7 @@ import {
   NOT_FOUND,
   RENT_ADDED_SUCCESSFULLY
 } from "../util/api.message.js";
-import { PAGINATION } from "../util/app.constant.js";
+import { PAGINATION, REDIS_TTL } from "../util/app.constant.js";
 import { pagination } from "../util/function.js";
 
 export default class RentController {
@@ -31,7 +32,7 @@ export default class RentController {
         .select("-__v");
 
       const redisKey = `CASH:${page}:${pageSize}`;
-      Cache.setEx(redisKey, 3600, JSON.stringify(rents));
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(rents));
 
       return res.json(rents);
     } catch (error) {
@@ -54,7 +55,7 @@ export default class RentController {
       }
 
       const redisKey = `RENT:${id}`;
-      Cache.setEx(redisKey, 3600, JSON.stringify(rent));
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(rent));
 
       return res.json(rent);
     } catch (error) {

@@ -19,7 +19,6 @@ route.get(
     Auth.hasBearerToken,
     Auth.hasExpiredToken,
     AdminAuthentication,
-    joiMiddleware(schemas.idRequestParams, "params"),
     CashCaching.find
   ],
   cashController.find

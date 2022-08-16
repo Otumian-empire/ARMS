@@ -1,3 +1,4 @@
+import { Cache } from "../caching/index.js";
 import logger from "../config/logger.js";
 import { cashModel, tenantModel } from "../model/index.js";
 import {
@@ -6,7 +7,7 @@ import {
   DELETED_SUCCESSFULLY,
   INVALID_CREDENTIALS
 } from "../util/api.message.js";
-import { PAGINATION } from "../util/app.constant.js";
+import { PAGINATION, REDIS_TTL } from "../util/app.constant.js";
 import { generateToken, pagination } from "../util/function.js";
 
 export default class CashController {
@@ -24,7 +25,7 @@ export default class CashController {
         .select("-__v");
 
       const redisKey = `CASH:${page}:${pageSize}`;
-      Cache.setEx(redisKey, 3600, JSON.stringify(cashes));
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(cashes));
 
       return res.json(cashes);
     } catch (error) {
@@ -52,7 +53,7 @@ export default class CashController {
         .select("-__v");
 
       const redisKey = `CASH:${id}:${page}:${pageSize}`;
-      Cache.setEx(redisKey, 3600, JSON.stringify(cashes));
+      await Cache.setEx(redisKey, REDIS_TTL, JSON.stringify(cashes));
 
       return res.json(cashes);
     } catch (error) {
@@ -70,17 +71,17 @@ export default class CashController {
       const id = req.params.id;
       const amount = Number(req.body.amount) || 0;
 
+      const tenant = await tenantModel.findById(id);
+
+      if (!tenant) {
+        throw new Error(INVALID_CREDENTIALS);
+      }
+
       if (!id || !amount) {
         return res.json({
           success: false,
           message: AN_ERROR_OCCURRED
         });
-      }
-
-      const tenant = await tenantModel.findById(id);
-
-      if (!tenant) {
-        throw new Error(INVALID_CREDENTIALS);
       }
 
       const token = generateToken();
