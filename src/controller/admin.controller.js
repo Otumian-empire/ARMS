@@ -32,7 +32,7 @@ export default class AdminController {
         throw new Error(NOT_FOUND);
       }
 
-      const redisKey = `ADMIN_${id}`;
+      const redisKey = `ADMIN:${id}`;
       await Cache.setEx(redisKey, 3600, JSON.stringify(admin));
 
       return res.json(admin);
