@@ -83,25 +83,37 @@ export default class RentController {
       const tenant = await tenantModel.findById(id);
 
       if (!tenant) {
-        throw new Error(INVALID_CREDENTIALS);
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS
+        });
       }
 
       const cash = await cashModel.find({ _id: cashId, tenantId: id });
 
       if (!cash) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       const apartment = await apartmentModel.findById(apartmentId);
 
       if (!apartment) {
-        throw new Error(INVALID_CREDENTIALS);
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS
+        });
       }
 
       const isOccupied = await rentModel.findOne({ apartmentId });
 
       if (isOccupied) {
-        throw new Error(APARTMENT_IS_OCCUPIED);
+        return res.json({
+          success: false,
+          message: APARTMENT_IS_OCCUPIED
+        });
       }
 
       // TODO: add a field to the cash table that indicates the
@@ -114,7 +126,10 @@ export default class RentController {
       });
 
       if (!rent) {
-        throw new Error(AN_ERROR_OCCURRED);
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED
+        });
       }
 
       return res.json({
@@ -139,7 +154,10 @@ export default class RentController {
       const result = await rentModel.findByIdAndDelete(id);
 
       if (!result) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       return res.json({

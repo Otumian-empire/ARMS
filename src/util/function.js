@@ -1,4 +1,4 @@
-import { ONE, PAGINATION } from "./app.constant.js";
+import { JWT_TTL, ONE, PAGINATION } from "./app.constant.js";
 
 export function generateToken() {
   const SACK = "1234567890";
@@ -53,4 +53,17 @@ export function pagination(page = 1, pageSize = 12) {
   let limit = pageSize;
 
   return { limit, skip: offset };
+}
+
+export function getJwtIat() {
+  return Date.now() + JWT_TTL;
+}
+export function getTokenFromHeader(req) {
+  const headerAuth = req.headers["authorization"];
+
+  if (!headerAuth) {
+    return "";
+  }
+
+  return headerAuth.split(" ")[1];
 }

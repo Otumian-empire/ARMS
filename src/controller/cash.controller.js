@@ -74,7 +74,10 @@ export default class CashController {
       const tenant = await tenantModel.findById(id);
 
       if (!tenant) {
-        throw new Error(INVALID_CREDENTIALS);
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS
+        });
       }
 
       if (!id || !amount) {
@@ -93,7 +96,10 @@ export default class CashController {
       });
 
       if (!cash) {
-        throw new Error(AN_ERROR_OCCURRED);
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED
+        });
       }
 
       return res.json({

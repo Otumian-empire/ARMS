@@ -51,7 +51,10 @@ export default class ApartmentController {
       const apartment = await apartmentModel.findById(id).select("-__v");
 
       if (!apartment) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       const redisKey = `APARTMENT:${id}`;
@@ -95,7 +98,10 @@ export default class ApartmentController {
       const result = await apartment.save();
 
       if (!result) {
-        throw new Error(AN_ERROR_OCCURRED);
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED
+        });
       }
 
       return res.json({
@@ -121,7 +127,10 @@ export default class ApartmentController {
       const apartment = await apartmentModel.findById(id);
 
       if (!apartment) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       if (roomNumber) {
@@ -153,7 +162,10 @@ export default class ApartmentController {
       const result = await apartment.save();
 
       if (!result) {
-        throw new Error(AN_ERROR_OCCURRED);
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED
+        });
       }
 
       return res.json({
@@ -178,7 +190,10 @@ export default class ApartmentController {
       const result = await apartmentModel.findByIdAndDelete(id);
 
       if (!result) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       return res.json({

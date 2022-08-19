@@ -29,7 +29,10 @@ export default class AdminController {
       const admin = await adminModel.findById(id).select("-password -__v");
 
       if (!admin) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       const redisKey = `ADMIN:${id}`;
@@ -80,13 +83,19 @@ export default class AdminController {
       const result = await adminModel.findOne({ username });
 
       if (!result) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       const same = await compare(password, result.password);
 
       if (!same) {
-        throw new Error(INVALID_CREDENTIALS);
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS
+        });
       }
 
       const token = await Auth.generateJWT({
@@ -119,7 +128,10 @@ export default class AdminController {
       const result = await adminModel.findById(id);
 
       if (!result) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       if (email) {
@@ -129,7 +141,10 @@ export default class AdminController {
       const updatedResult = await result.save();
 
       if (!updatedResult) {
-        throw new Error(AN_ERROR_OCCURRED);
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED
+        });
       }
 
       return res.json({
@@ -154,7 +169,10 @@ export default class AdminController {
       const result = await adminModel.findByIdAndDelete(id);
 
       if (!result) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       return res.json({

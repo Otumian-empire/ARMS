@@ -1,13 +1,11 @@
 import jwt from "jsonwebtoken";
 import { FORBIDDEN, REQUEST_TOKEN } from "../util/api.message.js";
-import { JWT_SECRET, JWT_TTL } from "../util/app.constant.js";
+import { JWT_SECRET } from "../util/app.constant.js";
+import { getJwtIat, getTokenFromHeader } from "../util/function.js";
 
 export default class Auth {
   static async generateJWT(payload = {}) {
-    const JWT_IAT = Date.now() + JWT_TTL;
-    const jwtToken = jwt.sign({ ...payload, iat: JWT_IAT }, JWT_SECRET);
-
-    return jwtToken;
+    return jwt.sign({ ...payload, iat: getJwtIat() }, JWT_SECRET);
   }
 
   static async verifyJWT(token) {
@@ -16,13 +14,11 @@ export default class Auth {
   }
 
   static async hasBearerToken(req, res, next) {
-    const headerAuth = req.headers["authorization"];
+    const token = getTokenFromHeader(req);
 
-    if (!headerAuth) {
+    if (!token) {
       return res.status(403).json({ success: false, message: FORBIDDEN });
     }
-
-    const token = headerAuth.split(" ")[1];
 
     req.token = token;
 

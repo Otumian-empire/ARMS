@@ -6,7 +6,6 @@ import { tenantModel } from "../model/index.js";
 import {
   AN_ERROR_OCCURRED,
   DELETED_SUCCESSFULLY,
-  FORBIDDEN,
   INVALID_CREDENTIALS,
   KIN_IS_REQUIRED,
   LOGIN_SUCCESSFUL,
@@ -15,7 +14,7 @@ import {
   UPDATE_SUCCESSFUL
 } from "../util/api.message.js";
 import { PAGINATION, REDIS_TTL, rounds } from "../util/app.constant.js";
-import { isAuthenticUser, pagination } from "../util/function.js";
+import { pagination } from "../util/function.js";
 
 export default class TenantController {
   static async find(req, res) {
@@ -56,7 +55,10 @@ export default class TenantController {
       const tenant = await tenantModel.findById(id);
 
       if (!tenant) {
-        throw new Error(NOT_FOUND);
+        return res.json({
+          success: false,
+          message: NOT_FOUND
+        });
       }
 
       const redisKey = `TENANT:${id}`;
@@ -87,7 +89,10 @@ export default class TenantController {
       } = req.body;
 
       if (!kin.fullName || !kin.email || !kin.phone || !kin.residenceAddress) {
-        throw new Error(KIN_IS_REQUIRED);
+        return res.json({
+          success: false,
+          message: KIN_IS_REQUIRED
+        });
       }
 
       const hashedPassword = await hash(password, rounds);
@@ -106,7 +111,10 @@ export default class TenantController {
       const result = await tenant.save();
 
       if (!result) {
-        throw new Error(AN_ERROR_OCCURRED);
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED
+        });
       }
 
       return res.json({
@@ -170,14 +178,16 @@ export default class TenantController {
 
   static async update(req, res) {
     try {
-
       const { email, phone, kin } = req.body;
       const id = req.params.id;
 
       const tenant = await tenantModel.findById(id);
 
       if (!tenant) {
-        throw new Error(INVALID_CREDENTIALS);
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS
+        });
       }
 
       if (email) {
@@ -201,7 +211,10 @@ export default class TenantController {
       const updatedTenant = await tenant.save();
 
       if (!updatedTenant) {
-        throw new Error(AN_ERROR_OCCURRED);
+        return res.json({
+          success: false,
+          message: AN_ERROR_OCCURRED
+        });
       }
 
       return res.json({
@@ -226,7 +239,10 @@ export default class TenantController {
       const deletedTenant = await tenantModel.findByIdAndRemove(id);
 
       if (!deletedTenant) {
-        throw new Error(INVALID_CREDENTIALS);
+        return res.json({
+          success: false,
+          message: INVALID_CREDENTIALS
+        });
       }
 
       return res.json({
