@@ -58,6 +58,7 @@ export function pagination(page = 1, pageSize = 12) {
 export function getJwtIat() {
   return Date.now() + JWT_TTL;
 }
+
 export function getTokenFromHeader(req) {
   const headerAuth = req.headers["authorization"];
 
